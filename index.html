@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulado Enade - História da Psicologia</title>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
+            color: #2d3748; 
+            line-height: 1.6; 
+            padding: 30px 15px; 
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container { 
+            max-width: 800px; 
+            margin: auto; 
+            background: #ffffff; 
+            padding: 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+        }
+
+        /* --- Abas de Seleção de Banco --- */
+        .bank-tabs-container {
+            background: #edf2f7;
+            padding: 8px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .bank-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 16px;
+            font-size: 1.05em;
+            font-weight: 600;
+            color: #718096;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .bank-tab:hover:not(.active) { color: #2d3748; }
+
+        .bank-tab.active {
+            background: #ffffff;
+            color: #3182ce;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .stats-panel { 
+            display: flex; 
+            justify-content: space-between; 
+            background: #2d3748; /* Fundo escuro moderno */
+            color: #ffffff; /* Texto branco para dar contraste */
+            padding: 20px 25px; 
+            border-radius: 16px; 
+            margin-bottom: 30px; 
+            font-weight: 600; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .stats-panel span { font-size: 1.05em; }
+        .acertos { color: #68d391; } /* Verde mais vibrante para brilhar no fundo escuro */
+        .erros { color: #fc8181; } /* Vermelho mais claro para destacar no fundo escuro */
+
+        /* --- Área da Questão --- */
+        .question-header { 
+            font-size: 1.4em; 
+            font-weight: 700; 
+            margin-bottom: 15px; 
+            color: #2b6cb0; 
+        }
+        .enunciado { 
+            margin-bottom: 25px; 
+            white-space: pre-wrap; 
+            font-size: 1.15em; 
+            color: #2d3748;
+        }
+        .assercoes-box { 
+            background-color: #f7fafc; 
+            border-left: 5px solid #3182ce; 
+            padding: 18px 20px; 
+            margin-bottom: 25px; 
+            font-style: italic; 
+            border-radius: 0 12px 12px 0; 
+            color: #4a5568;
+        }
+        
+        /* --- Alternativas --- */
+        .options-container { margin-bottom: 30px; }
+        .option-label { 
+            display: flex;
+            align-items: center;
+            background: #ffffff; 
+            padding: 18px 20px; 
+            margin-bottom: 12px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            border: 2px solid #e2e8f0; 
+            transition: all 0.2s ease; 
+            font-size: 1.05em;
+            font-weight: 500;
+        }
+        .option-label:hover { 
+            border-color: #3182ce; 
+            background: #ebf8ff; 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+        .option-label.correct { 
+            border-color: #38a169; 
+            background: #f0fff4; 
+            color: #22543d;
+        }
+        .option-label.incorrect { 
+            border-color: #e53e3e; 
+            background: #fff5f5; 
+            color: #742a2a;
+        }
+        input[type="radio"] { 
+            margin-right: 15px; 
+            transform: scale(1.3); 
+            accent-color: #3182ce;
+        }
+        
+        /* --- Botões de Navegação --- */
+        .nav-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        .btn { 
+            background: #3182ce; 
+            color: #ffffff; 
+            border: none; 
+            padding: 16px 24px; 
+            font-size: 1.1em; 
+            font-weight: 600; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            flex: 1; 
+            transition: all 0.2s ease; 
+            box-shadow: 0 4px 6px rgba(49, 130, 206, 0.2);
+        }
+        .btn:hover { 
+            background: #2b6cb0; 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(49, 130, 206, 0.3);
+        }
+        .btn:disabled { 
+            background: #cbd5e0; 
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed; 
+        }
+        .btn-secondary { background: #a0aec0; box-shadow: 0 4px 6px rgba(160, 174, 192, 0.2); }
+        .btn-secondary:hover { background: #718096; box-shadow: 0 6px 12px rgba(160, 174, 192, 0.3); }
+        
+        /* --- Feedback (Explicações) --- */
+        .feedback { 
+            margin-top: 30px; 
+            padding: 25px; 
+            border-radius: 16px; 
+            display: none; 
+            font-size: 1.05em; 
+        }
+        .feedback.correct-box { background: #f0fff4; color: #22543d; border: 2px solid #c6f6d5; }
+        .feedback.incorrect-box { background: #fff5f5; color: #742a2a; border: 2px solid #fed7d7; }
+        .explanation { margin-top: 12px; font-weight: normal; line-height: 1.6; }
+
+        /* --- Grid de Navegação Rápida --- */
+        .question-grid { 
+            margin-top: 40px; 
+            padding-top: 30px; 
+            border-top: 2px solid #edf2f7; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+        }
+        .grid-btn { 
+            width: 45px; 
+            height: 45px; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 1em;
+            background: #edf2f7; 
+            color: #4a5568; 
+            transition: all 0.2s; 
+        }
+        .grid-btn:hover { background: #e2e8f0; transform: translateY(-2px); }
+        .grid-btn.answered-correct { background: #48bb78; color: white; }
+        .grid-btn.answered-incorrect { background: #f56565; color: white; }
+        .grid-btn.current { 
+            border: 3px solid #2d3748; 
+            background: #fff;
+            transform: scale(1.1); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            z-index: 10; 
+            color: #2d3748;
+        }
+        
+        .reset-btn { background: #f56565; margin-top: 40px; width: 100%; box-shadow: 0 4px 6px rgba(245, 101, 101, 0.2); }
+        .reset-btn:hover { background: #e53e3e; }
+
+        /* --- Ajustes de Responsividade para Celulares --- */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 25px 20px; border-radius: 20px; }
+            
+            .bank-tabs-container { flex-direction: column; background: transparent; padding: 0; gap: 10px; }
+            .bank-tab { background: #edf2f7; }
+
+            .stats-panel { 
+                display: grid;
+                grid-template-columns: 1fr 1fr; 
+                gap: 10px;
+                padding: 15px;
+                text-align: left;
+            }
+            
+            .nav-buttons { flex-direction: column; gap: 12px; }
+            #submit-btn { order: -1; }
+            #prev-btn, #next-btn { width: 100%; }
+
+            .question-grid { justify-content: center; gap: 8px; }
+            .grid-btn { width: 38px; height: 38px; font-size: 0.9em; }
+        }
+    </style></head>
+<body>
+
+<div class="container">
+
+    <div class="bank-tabs-container">
+        <button id="tab-professor" class="bank-tab active" onclick="trocarBanco('professor')">
+            REVISÃO PROF. LEANDRO
+        </button>
+        <button id="tab-ia" class="bank-tab" onclick="trocarBanco('ia')">
+            QUESTÕES EXTRAS
+        </button>
+    </div>
+    <div class="stats-panel">
+        <span>Questão <span id="current-question-num">1</span> de <span id="total-questions">0</span></span>
+        <span class="acertos">Acertos: <span id="score-correct">0</span></span>
+        <span class="erros">Erros: <span id="score-incorrect">0</span></span>
+        <span>Aproveitamento: <span id="score-percent">0</span>%</span>
+    </div>
+
+    <div id="quiz-area">
+        <div class="question-header" id="question-title"></div>
+        <div class="enunciado" id="enunciado-text"></div>
+        <div class="assercoes-box" id="assercoes-area" style="display: none;"></div>
+        <div class="options-container" id="options-area"></div>
+        
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" id="prev-btn" onclick="navegar(-1)">&#8592; Voltar</button>
+            <button class="btn" id="submit-btn" onclick="verificarResposta()">Confirmar Resposta</button>
+            <button class="btn btn-secondary" id="next-btn" onclick="navegar(1)">Avançar &#8594;</button>
+        </div>
+        
+        <div id="feedback-area" class="feedback">
+            <strong id="feedback-title"></strong>
+            <div id="feedback-explanation" class="explanation"></div>
+        </div>
+
+        <div class="question-grid" id="grid-area"></div>
+        
+        <button class="btn reset-btn" onclick="zerarSimulado()">Limpar Progresso e Recomeçar</button>
+    </div>
+</div>
+
+<script>
+    // ==========================================
+    // COLOQUE SEUS LOTES DE JSON AQUI DENTRO
+    // ==========================================
+    const bancoProfessor = [
+  {
+    "id": 1,
+    "tipo": "situacao_problema",
+    "enunciado": "Em um estágio supervisionado em psicologia clínica, uma estudante é orientada a compreender a experiência de um paciente com ansiedade sem recorrer imediatamente a diagnósticos ou categorias prévias. O supervisor sugere a utilização da redução fenomenológica proposta por Edmund Husserl.\nNesse contexto, a estudante deve:",
+    "alternativas": [
+      "A) Mensurar os sintomas por escalas padronizadas para eliminar a subjetividade.",
+      "B) Suspender julgamentos prévios para descrever a experiência tal como se apresenta à consciência.",
+      "C) Priorizar explicações biológicas em detrimento da experiência subjetiva.",
+      "D) Considerar a consciência como independente do mundo vivido.",
+      "E) Formular hipóteses causais antes da escuta do paciente."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. A redução fenomenológica (ou epoché) orienta o pesquisador ou terapeuta a 'colocar entre parênteses' seus pressupostos teóricos, diagnósticos e preconceitos para captar o fenômeno na sua essência, tal como aparece à consciência do sujeito."
+  },
+  {
+    "id": 2,
+    "tipo": "situacao_problema",
+    "enunciado": "Durante uma pesquisa em psicologia experimental sobre percepção visual em ambientes urbanos, um pesquisador observa que participantes reconhecem objetos complexos (como “um sofá velho”) imediatamente, sem analisar separadamente cor, forma e textura.\nÀ luz da fenomenologia de Maurice Merleau-Ponty, esse fenômeno indica que:",
+    "alternativas": [
+      "A) A percepção resulta de inferências cognitivas posteriores aos dados sensoriais.",
+      "B) Os estímulos são processados isoladamente antes da integração.",
+      "C) A percepção já é significativa e integrada desde o início da experiência.",
+      "D) A consciência é passiva diante dos estímulos ambientais.",
+      "E) O conhecimento científico precede a experiência perceptiva."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Para Merleau-Ponty, a percepção não é a soma de partes ou estímulos isolados. Nós percebemos totalidades significativas desde o início; o sentido e a integração já se dão imediatamente na nossa relação com o mundo."
+  },
+  {
+    "id": 3,
+    "tipo": "situacao_problema",
+    "enunciado": "Um pesquisador investiga a relação entre condições de trabalho precarizadas e sofrimento psíquico em trabalhadores de aplicativos. Ele adota como base o Materialismo Histórico e Dialético.\nDe acordo com essa perspectiva, o pesquisador deve considerar que:",
+    "alternativas": [
+      "A) As ideias individuais determinam as condições materiais.",
+      "B) A consciência determina o ser social.",
+      "C) As condições materiais de produção influenciam as relações sociais e subjetivas.",
+      "D) A realidade social é fixa e imutável.",
+      "E) O conhecimento científico é neutro e independente da história."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Na visão marxista, a infraestrutura material e as relações de produção da sociedade determinam (ou influenciam fortemente) a superestrutura, que inclui as relações sociais, a cultura e a própria subjetividade/sofrimento do indivíduo."
+  },
+  {
+    "id": 4,
+    "tipo": "situacao_problema",
+    "enunciado": "Em uma disciplina de metodologia científica, estudantes analisam um experimento clássico conhecido como “Peru Indutivista”, no qual um peru conclui que será alimentado diariamente, até ser surpreendido em um dia específico.\nEsse exemplo demonstra que:",
+    "alternativas": [
+      "A) A repetição de observações confirma leis universais.",
+      "B) A ciência se baseia apenas na observação empírica.",
+      "C) A observação sempre antecede a teoria.",
+      "D) O senso comum é suficiente para produzir conhecimento científico.",
+      "E) Generalizações indutivas podem falhar ao pressupor regularidade futura."
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. O exemplo ilustra a falha do método indutivo: não importa quantas vezes você tenha observado algo no passado (como ser alimentado todo dia), a lógica indutiva não pode garantir com 100% de certeza absoluta que o padrão se manterá no futuro."
+  },
+  {
+    "id": 5,
+    "tipo": "multipla_escolha",
+    "enunciado": "Um grupo de pesquisa analisa diferentes teorias psicológicas quanto à sua cientificidade, com base no critério de falseabilidade de Karl Popper.\nAvalie as assertivas:\nI. Uma teoria científica deve poder ser refutada por evidências empíricas.\nII. Teorias que explicam qualquer resultado possível são consideradas fortes cientificamente.\nIII. A testabilidade é um critério central para diferenciar ciência de pseudociência.\nIV. A ciência progride pela confirmação de hipóteses verdadeiras.\nAssinale a alternativa correta:",
+    "alternativas": [
+      "A) I e III apenas",
+      "B) II e IV apenas",
+      "C) I, II e III",
+      "D) I, III e IV",
+      "E) II, III e IV"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Popper defendia que a marca da ciência é ser testável e refutável (I e III verdadeiras). A II é falsa porque teorias que explicam 'tudo' não correm risco empírico (são não-científicas). A IV é falsa porque, para Popper, a ciência progride pela refutação (eliminação de erros) e não por confirmações incontestáveis."
+  },
+  {
+    "id": 6,
+    "tipo": "multipla_escolha",
+    "enunciado": "Durante um seminário sobre história da ciência, estudantes discutem mudanças teóricas na psicologia, como a transição do behaviorismo para abordagens cognitivas.\nAvalie as assertivas à luz de Thomas Kuhn:\nI. A ciência normal ocorre dentro de um paradigma consolidado.\nII. Anomalias podem gerar crises no paradigma vigente.\nIII. Revoluções científicas implicam mudanças estruturais na forma de ver o mundo.\nIV. O progresso científico é sempre linear e cumulativo.\nAssinale a alternativa correta:",
+    "alternativas": [
+      "A) I, II, III e IV",
+      "B) I e IV apenas",
+      "C) II e III apenas",
+      "D) I, II e III apenas",
+      "E) III e IV apenas"
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. Kuhn propõe o ciclo: Ciência Normal (I) -> Anomalias e Crises (II) -> Revolução Científica (III). A assertiva IV é falsa, pois o progresso na visão de Kuhn se dá por saltos e quebras de paradigma, rompendo justamente com a ideia de acúmulo linear."
+  },
+  {
+    "id": 7,
+    "tipo": "multipla_escolha",
+    "enunciado": "Em um estudo sobre Burnout em estudantes universitários, um pesquisador investiga a relação entre o tipo de transporte utilizado (carro, ônibus, bicicleta) e níveis de exaustão emocional.\nAnalise:\nI. O tipo de transporte é variável independente.\nII. O nível de Burnout é variável dependente.\nIII. O transporte pode ser considerado variável preditora.\nIV. Não é possível estabelecer nenhuma relação entre essas variáveis.\nAssinale a alternativa correta:",
+    "alternativas": [
+      "A) I e IV apenas",
+      "B) I, II e III apenas",
+      "C) II e III apenas",
+      "D) I, II, III e IV",
+      "E) III e IV apenas"
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. O 'tipo de transporte' é manipulado ou medido como a possível causa/preditor do efeito (Variável Independente/Preditora). O 'nível de Burnout' é o resultado esperado, ou seja, o que sofre a influência (Variável Dependente). A IV é falsa, visto que a estatística permite sim buscar essa relação."
+  },
+  {
+    "id": 8,
+    "tipo": "assercao_razao",
+    "enunciado": "Ao avaliar uma teoria psicológica, um pesquisador observa que ela não é abandonada diante de críticas, mas ajustada por meio de hipóteses auxiliares.\nAsserção (A): Programas de pesquisa utilizam um “cinturão protetor” para lidar com anomalias.\nRazão (R): Esse cinturão cria hipóteses auxiliares que preservam o núcleo teórico central.\nAssinale:",
+    "alternativas": [
+      "A) A e R verdadeiras, e R justifica A",
+      "B) A e R verdadeiras, mas R não justifica A",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) A e R falsas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. De acordo com Imre Lakatos, os programas de pesquisa científica possuem um núcleo duro (inquestionável para seus adeptos). Para salvá-lo das anomalias, os cientistas adicionam o cinturão protetor de hipóteses auxiliares, justificando assim a asserção A através da R."
+  },
+  {
+    "id": 9,
+    "tipo": "assercao_razao",
+    "enunciado": "Em um estudo sobre populações vulneráveis, um pesquisador utiliza participantes iniciais que indicam novos participantes para a pesquisa.\nAsserção (A): A técnica utilizada é a amostragem “bola de neve”.\nRazão (R): Essa técnica se baseia na indicação de novos participantes pelos já incluídos na pesquisa.\nAssinale:",
+    "alternativas": [
+      "A) A e R falsas",
+      "B) A e R verdadeiras, mas R não justifica A",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) A e R verdadeiras, e R justifica A"
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. Ambas as frases estão corretas. A amostragem 'bola de neve' (snowball) consiste justamente no fato de que o próprio sujeito investigado indica outras pessoas do seu círculo para compor a amostra, método muito útil em grupos de difícil acesso."
+  },
+  {
+    "id": 10,
+    "tipo": "assercao_razao",
+    "enunciado": "Em uma análise de dados de desempenho acadêmico, um pesquisador organiza os valores em ordem crescente para identificar o valor central.\nAsserção (A): O pesquisador está calculando a mediana.\nRazão (R): A mediana corresponde ao ponto central da distribuição ordenada dos dados.\nAssinale:",
+    "alternativas": [
+      "A) A e R verdadeiras, e R justifica A",
+      "B) A e R verdadeiras, mas R não justifica A",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) A e R falsas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A mediana é a medida de tendência central calculada ao colocar todos os dados numéricos numa ordem sequencial e localizar o valor que está exatamente no meio da lista. Ambas estão corretas e a R é a definição da A."
+  },
+  {
+    "id": 11,
+    "tipo": "situacao_problema",
+    "enunciado": "Durante a elaboração do Trabalho de Conclusão de Curso (TCC), uma estudante de Psicologia decide transformar sua monografia em um artigo científico para submissão a uma revista.\nNesse processo, a principal diferença entre monografia e artigo científico é:",
+    "alternativas": [
+      "A) A monografia não exige revisão teórica.",
+      "B) O artigo científico é mais sintético e voltado à comunicação de resultados específicos.",
+      "C) A monografia não utiliza metodologia científica.",
+      "D) O artigo científico não precisa de fundamentação teórica.",
+      "E) Ambos possuem exatamente a mesma estrutura e finalidade."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. A monografia é um trabalho escolar longo sobre um assunto único. O artigo tem como finalidade primordial a comunicação entre pares, focado em levar conhecimento ao público, sendo muito mais enxuto e específico na exposição dos dados e análises."
+  },
+  {
+    "id": 12,
+    "tipo": "situacao_problema",
+    "enunciado": "Um pesquisador investiga a relação entre estresse acadêmico e desempenho escolar, considerando que o suporte social pode alterar essa relação.\nNesse caso, o suporte social é:",
+    "alternativas": [
+      "A) Variável dependente",
+      "B) Variável independente",
+      "C) Variável moderadora",
+      "D) Variável de controle irrelevante",
+      "E) Variável aleatória"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A variável que se coloca no meio da relação entre uma causa e um efeito, atenuando, intensificando ou alterando essa interação, é classificada como variável moderadora."
+  },
+  {
+    "id": 13,
+    "tipo": "situacao_problema",
+    "enunciado": "Durante a coleta de dados, um pesquisador utiliza trechos de entrevistas de participantes sem anonimização e sem consentimento formal.\nEssa prática:",
+    "alternativas": [
+      "A) É aceitável em pesquisas qualitativas",
+      "B) É permitida se os dados forem relevantes",
+      "C) Viola princípios éticos fundamentais",
+      "D) É comum em estudos exploratórios",
+      "E) É justificável em nome do avanço científico"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Todo projeto de pesquisa envolvendo seres humanos exige a aplicação do TCLE (Termo de Consentimento Livre e Esclarecido) e a proteção do anonimato dos dados, sob pena de infração ética gravíssima."
+  },
+  {
+    "id": 14,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudo combina questionários quantitativos sobre ansiedade com entrevistas em profundidade sobre experiências subjetivas.\nEsse desenho caracteriza:",
+    "alternativas": [
+      "A) Pesquisa experimental",
+      "B) Pesquisa exclusivamente qualitativa",
+      "C) Pesquisa de métodos mistos",
+      "D) Estudo de caso único",
+      "E) Pesquisa etnográfica"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Pesquisas que utilizam e cruzam, no mesmo estudo, a abordagem quantitativa (questionários/escalas) e a qualitativa (entrevistas/narrativas) são classificadas como metodologias de métodos mistos."
+  },
+  {
+    "id": 15,
+    "tipo": "situacao_problema",
+    "enunciado": "Em um estudo comparando dois grupos de estudantes (com e sem terapia), um teste t apresentou p = 0,03.\nEsse resultado indica que:",
+    "alternativas": [
+      "A) Não há diferença entre os grupos",
+      "B) A diferença observada é estatisticamente significativa",
+      "C) O resultado é aleatório",
+      "D) A hipótese nula foi confirmada",
+      "E) O tamanho do efeito é necessariamente grande"
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. O padrão de aceitação em Ciências Sociais é de p < 0,05. Como 0,03 é menor que 0,05, rejeita-se a hipótese de que foi acaso e afirma-se que a diferença tem significância estatística."
+  },
+  {
+    "id": 16,
+    "tipo": "situacao_problema",
+    "enunciado": "Um pesquisador compara níveis de estresse entre três grupos (calouros, intermediários e concluintes).\nO teste estatístico mais adequado é:",
+    "alternativas": [
+      "A) Correlação de Pearson",
+      "B) Teste t independente",
+      "C) ANOVA",
+      "D) Regressão logística",
+      "E) Qui-quadrado"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Para testar médias em delineamentos com 3 ou mais grupos (níveis da variável independente), o teste adequado é a Análise de Variância (ANOVA). O Teste t é indicado apenas para comparações de 2 grupos."
+  },
+  {
+    "id": 17,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudante copia trechos de um artigo sem citar a fonte, mesmo que tenha feito pequenas alterações no texto.\nEssa prática configura:",
+    "alternativas": [
+      "A) Parafraseamento adequado",
+      "B) Revisão teórica legítima",
+      "C) Plágio",
+      "D) Uso ético de fontes",
+      "E) Escrita autoral"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A apropriação de trechos ou ideias de outros autores sem conceder-lhes o crédito imediato via citação formal constitui fraude acadêmica e plágio, independentemente se houve troca de sinônimos."
+  },
+  {
+    "id": 18,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre pesquisa qualitativa em Psicologia:\nI. Busca compreender significados e experiências\nII. Utiliza dados numéricos como foco principal\nIII. O pesquisador é parte do processo interpretativo\nIV. O contexto é fundamental para análise\nA alternativa correta é:",
+    "alternativas": [
+      "A) I, III e IV",
+      "B) I e II",
+      "C) II e III",
+      "D) I, II e IV",
+      "E) Todas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A assertiva II é a única incorreta, pois a pesquisa qualitativa foca em descrições, discursos, imagem e experiência, não em uso primário de dados numéricos e estatística."
+  },
+  {
+    "id": 19,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre pesquisa quantitativa:\nI. Busca testar hipóteses\nII. Utiliza análise estatística\nIII. Prioriza subjetividade\nIV. Busca generalização dos resultados\nA alternativa correta é:",
+    "alternativas": [
+      "A) II e III",
+      "B) I e III",
+      "C) I, II e IV",
+      "D) I, III e IV",
+      "E) Todas"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A afirmativa III é falsa, pois priorizar a subjetividade (a experiência em si) é preceito dos métodos qualitativos. O modelo quantitativo preza pelo teste de hipótese e generalização amostral via estatística."
+  },
+  {
+    "id": 20,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre correlação em pesquisas psicológicas:\nI. Indica associação entre variáveis\nII. Implica causalidade\nIII. Pode ser positiva ou negativa\nIV. Não determina relação de causa e efeito\nA alternativa correta é:",
+    "alternativas": [
+      "A) Todas são corretas",
+      "B) I e II",
+      "C) II e III",
+      "D) I, II e IV",
+      "E) I, III e IV"
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. O grande mantra em métodos estatísticos é 'correlação não significa causalidade'. Variáveis podem se mover em tendências semelhantes (positivamente ou negativamente) sem que, necessariamente, uma cause a outra."
+  },
+  {
+    "id": 21,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre validade em pesquisa:\nI. Validade interna refere-se ao controle de variáveis\nII. Validade externa refere-se à generalização\nIII. Estudos qualitativos não possuem validade\nIV. Controle experimental aumenta validade interna\nA alternativa correta é:",
+    "alternativas": [
+      "A) I, II e IV",
+      "B) I e III",
+      "C) II e III",
+      "D) I, III e IV",
+      "E) Todas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A afirmativa III está errada. Pesquisas qualitativas possuem sim critérios rigorosos de validade e rigor metodológico, ainda que se distanciem dos termos probabilísticos quantitativos."
+  },
+  {
+    "id": 22,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre o método científico:\nI. Envolve formulação de hipóteses\nII. Testa hipóteses empiricamente\nIII. Produz verdades absolutas\nIV. Está sujeito a revisão\nA alternativa correta é:",
+    "alternativas": [
+      "A) I, III e IV",
+      "B) I e III",
+      "C) II e III",
+      "D) I, II e IV",
+      "E) Todas"
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. A assertiva III contradiz os fundamentos de Popper e Kuhn. A ciência é antidogmática, não produzindo 'verdades absolutas', mas o melhor conhecimento possível passível de refutação ou revolução teórica."
+  },
+  {
+    "id": 23,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre amostragem:\nI. Amostras probabilísticas permitem generalização\nII. Amostras não probabilísticas são sempre inválidas\nIII. Amostragem por conveniência é comum\nIV. Tamanho da amostra influencia resultados\nA alternativa correta é:",
+    "alternativas": [
+      "A) I, II e IV",
+      "B) I e II",
+      "C) II e III",
+      "D) I, III e IV",
+      "E) Todas"
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. A assertiva II é falsa. As amostras não-probabilísticas (por quotas, intencional ou conveniência) são vastamente utilizadas e absolutamente válidas dependendo do objetivo e do rigor do pesquisador, embora não permitam a inferência na população total."
+  },
+  {
+    "id": 24,
+    "tipo": "multipla_escolha",
+    "enunciado": "Sobre instrumentos psicológicos:\nI. Devem ser validados\nII. Devem ser confiáveis\nIII. Podem ser utilizados sem padronização\nIV. Influenciam os resultados\nA alternativa correta é:",
+    "alternativas": [
+      "A) II e III",
+      "B) I e III",
+      "C) I, II e IV",
+      "D) I, III e IV",
+      "E) Todas"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A assertiva III está totalmente errada. Aplicação sem padronização corrompe a eficácia e validade da testagem."
+  },
+  {
+    "id": 25,
+    "tipo": "assercao_razao",
+    "enunciado": "A: Métodos mistos combinam abordagens qualitativas e quantitativas.\nR: Essa combinação permite compreender tanto dados objetivos quanto subjetivos.",
+    "alternativas": [
+      "A) A e R verdadeiras, R justifica A",
+      "B) A e R verdadeiras, mas R não justifica",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) Ambas falsas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A junção do escopo numérico/quantitativo e do descritivo/qualitativo é a marca fundamental e a justificativa exata para o uso de desenhos de pesquisa multimétodos."
+  },
+  {
+    "id": 26,
+    "tipo": "assercao_razao",
+    "enunciado": "A: O consentimento informado é obrigatório em pesquisas com seres humanos.\nR: Ele garante que os participantes conheçam riscos e objetivos da pesquisa.",
+    "alternativas": [
+      "A) A e R verdadeiras, R justifica A",
+      "B) A e R verdadeiras, mas R não justifica",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) Ambas falsas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A assinatura do TCLE é o procedimento máximo da bioética que fundamenta a participação esclarecida para proteção das pessoas (autonomia)."
+  },
+  {
+    "id": 27,
+    "tipo": "assercao_razao",
+    "enunciado": "A: Um valor de p < 0,05 indica significância estatística.\nR: Isso sugere baixa probabilidade do resultado ocorrer ao acaso.",
+    "alternativas": [
+      "A) A falsa, R verdadeira",
+      "B) A e R verdadeiras, mas R não justifica",
+      "C) A verdadeira, R falsa",
+      "D) A e R verdadeiras, R justifica A",
+      "E) Ambas falsas"
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. Na inferência estatística (ANOVA ou teste-T, por exemplo), p menor que 5% indica que as distâncias entre médias dificilmente resultaram por variabilidade nula ao acaso, justificando rejeitar a hipótese inicial."
+  },
+  {
+    "id": 28,
+    "tipo": "assercao_razao",
+    "enunciado": "A: O plágio compromete a integridade científica.\nR: Ele envolve apropriação indevida de ideias sem referência.",
+    "alternativas": [
+      "A) A e R verdadeiras, mas R não justifica",
+      "B) A e R verdadeiras, R justifica A",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) Ambas falsas"
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. A essência do plágio é não referenciar (Citar) a ideia original, e isso atenta contra as normativas da elaboração do trabalho acadêmico sério (integridade), portanto, a relação causal na frase é perfeita."
+  },
+  {
+    "id": 29,
+    "tipo": "assercao_razao",
+    "enunciado": "A: Alta validade interna pode reduzir validade externa.\nR: O controle rigoroso pode tornar o contexto artificial.",
+    "alternativas": [
+      "A) A e R verdadeiras, R justifica A",
+      "B) A e R verdadeiras, mas R não justifica",
+      "C) A verdadeira, R falsa",
+      "D) A falsa, R verdadeira",
+      "E) Ambas falsas"
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Criar controles de variável precisos (interna) geralmente remove a pessoa do seu contexto natural (laboratório clínico em vez do ambiente urbano), reduzindo o fator generalizável do cotidiano (validade externa)."
+  },
+  {
+    "id": 30,
+    "tipo": "assercao_razao",
+    "enunciado": "A: Correlação não implica causalidade.\nR: Outras variáveis podem explicar a associação observada.",
+    "alternativas": [
+      "A) A verdadeira, R falsa",
+      "B) A e R verdadeiras, mas R não justifica",
+      "C) A e R verdadeiras, R justifica A",
+      "D) A falsa, R verdadeira",
+      "E) Ambas falsas"
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A possibilidade de existirem variáveis de confusão (não monitoradas no momento) ou sentido bidirecional na influência mútua é a principal razão pela qual correlação gráfica e estatística nunca prova de maneira fechada que algo causa diretamente o outro."
+  },
+  {
+    "id": 31,
+    "tipo": "discursiva",
+    "enunciado": "Durante um atendimento em psicologia clínica, um estudante relata dificuldade em compreender a experiência subjetiva de um paciente, pois tenta constantemente enquadrá-la em categorias diagnósticas prévias. Com base na fenomenologia: Explique o conceito de intencionalidade da consciência e analise como ele rompe com a dicotomia entre sujeito e objeto, destacando implicações para a escuta clínica.",
+    "resposta_esperada": "Na fenomenologia, a intencionalidade da consciência significa que a consciência nunca é vazia ou isolada; ela é sempre 'consciência DE alguma coisa'. Isso rompe a dicotomia sujeito-objeto porque não existe um sujeito interno separado de um mundo externo; eles estão co-implicados e só existem na relação. Na escuta clínica, a implicação é que o terapeuta deve suspender seus diagnósticos prévios (fazer a epoché) para escutar como o paciente se relaciona e dá sentido ao seu mundo, focando na experiência vivida e não na classificação de uma doença objetiva."
+  },
+  {
+    "id": 32,
+    "tipo": "discursiva",
+    "enunciado": "Em um grupo de pesquisa, estudantes afirmam que o objetivo da ciência é “descobrir verdades definitivas”. Com base na epistemologia de Karl Popper, discuta por que a ciência deve ser compreendida como um processo de eliminação de erros e compare essa perspectiva ao positivismo lógico.",
+    "resposta_esperada": "Para Karl Popper, a ciência não descobre 'verdades definitivas' porque sofre do problema da indução: não podemos provar que uma teoria é universalmente verdadeira apenas acumulando observações[cite: 52]. A ciência avança pela falseabilidade, ou seja, pelo esforço contínuo de tentar refutar e encontrar falhas nas teorias (eliminação de erros). O Positivismo Lógico, por outro lado, defendia o princípio da verificação empírica, acreditando que o papel da ciência era confirmar positivamente as teorias como verdades absolutas."
+  },
+  {
+    "id": 33,
+    "tipo": "discursiva",
+    "enunciado": "Dois profissionais analisam o mesmo exame psicológico e chegam a conclusões distintas. Explique como a teoria influencia a observação científica e discuta implicações para o diagnóstico em Psicologia.",
+    "resposta_esperada": "A filosofia da ciência moderna demonstra que não existe 'observação neutra'. Toda observação é impregnada de teoria (theory-laden). O que o profissional enxerga no exame depende da 'lente teórica' que ele utiliza (ex: psicanálise vs. behaviorismo). A implicação para o diagnóstico é que o psicólogo deve ter consciência crítica de que o seu referencial teórico direciona a sua interpretação dos sintomas, devendo evitar dogmatismos e estar aberto a revisar sua análise caso os dados clínicos apontem para outras direções."
+  },
+  {
+    "id": 34,
+    "tipo": "discursiva",
+    "enunciado": "Em um estudo sobre desigualdade social e sofrimento psíquico, um pesquisador utiliza o método marxista. Explique o movimento do abstrato ao concreto, detalhando suas etapas e sua importância para análise da realidade social.",
+    "resposta_esperada": "No método materialista histórico-dialético de Marx, o pesquisador não estuda o fenômeno isolado. O movimento parte do 'abstrato' (a visão caótica, imediata e aparente da realidade social), passa pela análise das suas múltiplas determinações (as contradições históricas, lutas de classes, economia) e retorna ao objeto de estudo de forma estruturada. Esse ponto de chegada é o 'concreto pensado', onde o fenômeno (como o sofrimento psíquico) é finalmente compreendido na sua totalidade e inserido no contexto da desigualdade material."
+  },
+  {
+    "id": 35,
+    "tipo": "discursiva",
+    "enunciado": "Um psicólogo precisa investigar tanto a prevalência de ansiedade quanto a experiência subjetiva dos pacientes. Compare pesquisa qualitativa e quantitativa quanto a objetivos, dados e papel do pesquisador, indicando situações de uso da abordagem fenomenológica.",
+    "resposta_esperada": "A pesquisa quantitativa tem como objetivo medir, testar hipóteses e generalizar resultados; utiliza dados numéricos e estatísticos[cite: 503], exigindo uma postura distanciada e neutra do pesquisador. A pesquisa qualitativa busca compreender os sentidos, as experiências e os contextos; utiliza narrativas e observações[cite: 503], e o pesquisador atua de forma próxima e interpretativa. A abordagem fenomenológica deve ser usada no estágio qualitativo, quando o foco for captar a essência da experiência vivida pelo paciente com ansiedade[cite: 259]."
+  },
+  {
+    "id": 36,
+    "tipo": "discursiva",
+    "enunciado": "Um grupo de pesquisa insiste em manter uma teoria, mesmo sem resultados empíricos novos, ajustando explicações após cada falha. Caracterize um programa de pesquisa degenerescente e apresente um exemplo aplicado à Psicologia.",
+    "resposta_esperada": "Segundo Imre Lakatos, um 'programa de pesquisa degenerescente' é aquele que para de fazer novas descobertas e de prever fatos inéditos. Em vez de avançar, os cientistas gastam sua energia criando hipóteses auxiliares (ad hoc) apenas para proteger a teoria principal das refutações. Um exemplo na psicologia seria uma teoria da personalidade que prevê um determinado comportamento, e, quando o paciente não apresenta esse comportamento, o terapeuta diz que foi por causa de uma 'resistência oculta', criando uma desculpa irrefutável para salvar a teoria."
+  },
+  {
+    "id": 37,
+    "tipo": "discursiva",
+    "enunciado": "Durante uma pesquisa qualitativa, um estudante decide aplicar o método fenomenológico. Descreva as etapas do método fenomenológico e explique o significado do lema “ir às coisas mesmas”.",
+    "resposta_esperada": "O lema 'ir às coisas mesmas' de Husserl significa abandonar as teorias prévias e os saberes científicos acumulados para observar o fenômeno na sua pureza, exatamente como ele aparece para a consciência. As etapas envolvem: 1) A epoché ou redução fenomenológica (colocar os preconceitos entre parênteses); 2) A descrição do fenômeno; 3) A variação imaginativa (tentar retirar elementos do relato para ver se o fenômeno deixa de ser o que é), até alcançar a 'essência' da experiência vivida."
+  },
+  {
+    "id": 38,
+    "tipo": "discursiva",
+    "enunciado": "Um estudo encontra associação entre uso de redes sociais e ansiedade. Explique a diferença entre correlação e causalidade, discutindo limitações metodológicas em pesquisas com seres humanos.",
+    "resposta_esperada": "Correlação indica apenas que duas variáveis variam juntas (quando o uso de redes sobe, a ansiedade sobe)[cite: 157, 158]. Causalidade exige provar que uma coisa causa diretamente a outra, o que demanda ordem temporal (a causa vem antes) e exclusão de fatores externos[cite: 160, 161]. Nas pesquisas humanas há limitações severas: não podemos isolar os indivíduos em laboratórios para retirar todas as variáveis de confusão (como contexto familiar ou genética), e a relação pode ser inversa (a ansiedade fazer o jovem usar mais redes)."
+  },
+  {
+    "id": 39,
+    "tipo": "discursiva",
+    "enunciado": "Um estudante pretende seguir carreira acadêmica e deseja compreender as exigências de diferentes níveis de formação. Diferencie dissertação de mestrado e tese de doutorado quanto a objetivos e exigência de originalidade científica.",
+    "resposta_esperada": "A dissertação de mestrado exige que o aluno demonstre domínio dos métodos de pesquisa e promova uma reflexão profunda e fundamentada sobre um problema, mas não obriga à descoberta de algo totalmente novo; ele pode apenas apresentar uma nova visão sobre uma realidade conhecida[cite: 105, 107]. Já a tese de doutorado é muito mais rigorosa quanto à originalidade: exige-se que a investigação traga um avanço significativo e uma contribuição inédita para a comunidade científica da área[cite: 116, 117, 119]."
+  },
+  {
+    "id": 40,
+    "tipo": "discursiva",
+    "enunciado": "Em um estudo sobre Burnout, “trabalhar ou não” apresentou p = 0,607, enquanto “tipo de transporte” apresentou p = 0,019. Interprete esses resultados e explique o significado do valor de p na tomada de decisão científica.",
+    "resposta_esperada": "O valor de 'p' representa a probabilidade de que a diferença observada tenha ocorrido por mero acaso. Na ciência, aceita-se um p < 0,05 (menos de 5% de chance de erro) para rejeitar a hipótese nula[cite: 414]. Como 'trabalhar ou não' teve p = 0,607, o resultado não tem significância estatística, ou seja, trabalhar não demonstrou impacto sobre o burnout[cite: 409, 410]. Já o 'tipo de transporte' teve p = 0,019 (menor que 0,05), o que significa que essa variável afeta significativamente os níveis de burnout de forma comprovada[cite: 425]."
+  }
+    ];
+    const bancoIA = [
+        
+  {
+    "id": 1,
+    "tipo": "situacao_problema",
+    "enunciado": "Uma psicóloga clínica atende um paciente com queixas de angústia intensa. Em vez de aplicar um teste padronizado ou tentar enquadrar o sofrimento do paciente em categorias diagnósticas logo na primeira sessão, ela busca compreender como essa angústia é vivenciada e qual o sentido atribuído pelo próprio paciente à sua experiência no mundo. Sob a ótica da fenomenologia de Husserl, essa postura metodológica exemplifica:",
+    "alternativas": [
+      "A) O uso do método indutivo para gerar um diagnóstico quantificável.",
+      "B) A redução fenomenológica, colocando em suspensão julgamentos teóricos prévios (epoché).",
+      "C) O isolamento rigoroso de variáveis para determinar a causa exata da angústia.",
+      "D) Uma abordagem materialista histórico-dialética do sintoma individual.",
+      "E) A adoção do critério de falsificacionismo de Karl Popper na prática clínica."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. A redução fenomenológica (epoché) exige que o profissional coloque suas teorias, preconceitos e diagnósticos 'entre parênteses' para conseguir observar o fenômeno exatamente como ele se apresenta à consciência do sujeito, sem tentar enquadrá-lo em categorias prévias."
+  },
+  {
+    "id": 2,
+    "tipo": "situacao_problema",
+    "enunciado": "Um grupo de pesquisadores defende uma teoria que afirma que 'todas as atitudes humanas são motivadas por traumas de infância reprimidos'. Quando confrontados com um paciente que teve uma infância excelente, os pesquisadores argumentam que 'o trauma foi tão profundo que a mente do paciente criou a ilusão de uma infância perfeita para se proteger'. Segundo o critério de demarcação de Karl Popper, essa teoria seria avaliada como:",
+    "alternativas": [
+      "A) Altamente científica, pois possui grande poder explicativo e responde a qualquer cenário empírico.",
+      "B) Um novo paradigma científico consolidado, segundo a visão de Thomas Kuhn.",
+      "C) Pseudocientífica, pois não é passível de falseabilidade, ou seja, não correm o risco de serem refutadas pelos fatos.",
+      "D) Científica, pois segue estritamente o princípio do indutivismo lógico.",
+      "E) Positivista, por focar exclusivamente no comportamento observável do paciente."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Para Karl Popper, uma teoria só é científica se puder ser testada e refutada (falseada) pela experiência empírica. Teorias (como ele apontou na psicanálise) que criam hipóteses irrefutáveis para acomodar qualquer resultado não são rigorosamente científicas."
+  },
+  {
+    "id": 3,
+    "tipo": "situacao_problema",
+    "enunciado": "Em um estudo experimental de psicologia do trânsito para avaliar o impacto da privação de sono na atenção concentrada, os pesquisadores dividiram participantes voluntários em dois grupos: o Grupo A dormiu 8 horas e o Grupo B dormiu apenas 4 horas. No dia seguinte, todos realizaram um teste computadorizado que media o tempo de reação e a atenção. Neste desenho de pesquisa quantitativa, a 'privação de sono' e a 'atenção concentrada' são, respectivamente:",
+    "alternativas": [
+      "A) Variável moderadora e variável de controle.",
+      "B) Variável dependente e variável independente.",
+      "C) Variável independente e variável dependente.",
+      "D) Ambas são variáveis de controle.",
+      "E) Variável predita e variável moderadora."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A Variável Independente é a 'causa' ou a manipulação (neste caso, as horas de sono) que afeta o fenômeno. A Variável Dependente é o 'efeito' ou a resposta medida (a atenção concentrada), que 'depende' da manipulação."
+  },
+  {
+    "id": 4,
+    "tipo": "situacao_problema",
+    "enunciado": "Um pesquisador acadêmico investiga as causas do adoecimento mental grave em trabalhadores da construção civil. Utilizando o referencial do Materialismo Histórico e Dialético, ele recusa explicações puramente biológicas e foca nas jornadas exaustivas e na precarização dos vínculos de trabalho. Esse pesquisador pressupõe que:",
+    "alternativas": [
+      "A) A consciência puramente individual determina as condições materiais.",
+      "B) A realidade social é estática e o sofrimento mental independe das relações de classe.",
+      "C) O adoecimento deve ser tratado apenas como um erro de processamento cognitivo.",
+      "D) As condições materiais de produção e as relações sociais influenciam profundamente a subjetividade.",
+      "E) O pesquisador deve manter neutralidade absoluta e separar sujeito e objeto na pesquisa."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. O método marxista (materialismo histórico-dialético) entende que a forma como produzimos a nossa existência material (trabalho, economia, base material) molda a superestrutura da sociedade e a própria subjetividade humana. O ser social determina a consciência."
+  },
+  {
+    "id": 5,
+    "tipo": "assercao_razao",
+    "enunciado": "Analise as asserções a seguir e a relação proposta entre elas:\n\nI. Um pesquisador que investiga o uso de medicamentos sem prescrição entre estudantes de medicina utiliza a técnica conhecida como 'bola de neve' (snowball) para recrutar participantes.\nPORQUE\nII. Essa técnica é um tipo clássico de amostragem probabilística, garantindo que todos os estudantes tenham exatamente a mesma probabilidade estatística de serem sorteados para a pesquisa.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A asserção I é verdadeira, pois a técnica 'bola de neve' existe e é muito usada em populações ocultas ou de nicho. A asserção II é falsa, pois a 'bola de neve' é uma técnica NÃO probabilística (a seleção depende de indicações e conveniência, e não de um sorteio aleatório)."
+  },
+  {
+    "id": 6,
+    "tipo": "multipla_escolha",
+    "enunciado": "Durante uma aula de Metodologia, os estudantes discutem a evolução histórica da Psicologia. Analise as assertivas abaixo à luz da teoria das revoluções científicas de Thomas Kuhn:\n\nI. O trabalho diário do cientista de resolver pequenos quebra-cabeças dentro de um modelo teórico estabelecido é chamado de 'ciência normal'.\nII. As revoluções científicas ocorrem quando o paradigma vigente não consegue mais explicar uma série de 'anomalias' acumuladas, resultando em uma crise.\nIII. Kuhn defende que o progresso da ciência é marcado por um acúmulo linear, contínuo e pacífico de verdades inquestionáveis ao longo dos séculos.",
+    "alternativas": [
+      "A) I, II e III.",
+      "B) I e II apenas.",
+      "C) II e III apenas.",
+      "D) I e III apenas.",
+      "E) III apenas."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. As afirmações I e II estão corretas. A afirmativa III é falsa porque Thomas Kuhn foi justamente o autor que destruiu a ideia de que a ciência avança de forma linear e cumulativa, argumentando que ela avança por rupturas e saltos (as revoluções de paradigmas)."
+  },
+  {
+    "id": 7,
+    "tipo": "situacao_problema",
+    "enunciado": "Você definiu o seguinte objetivo geral no seu Trabalho de Conclusão de Curso: 'Compreender os sentidos, os conflitos e os significados que mães atípicas atribuem à rede de apoio psicológico municipal'. Considerando as características dos métodos de pesquisa, qual deve ser a abordagem e os instrumentos prioritários deste trabalho?",
+    "alternativas": [
+      "A) Pesquisa Quantitativa; priorizando o uso de questionários fechados e escalas psicométricas padronizadas.",
+      "B) Pesquisa Exploratória Explicativa; utilizando testes estatísticos rigorosos e delineamento quase-experimental.",
+      "C) Pesquisa Descritiva Quantitativa; focando em estabelecer correlações precisas de causa e efeito.",
+      "D) Pesquisa Exclusivamente Bibliográfica; proibindo o contato direto com as participantes e fontes primárias.",
+      "E) Pesquisa Qualitativa; priorizando o uso de entrevistas semiestruturadas em profundidade e observações."
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. Quando o objetivo da pesquisa é focar na experiência, nos significados subjetivos e na compreensão profunda de um contexto vivido (e não em mensurar e quantificar), a abordagem metodológica exigida é a Qualitativa."
+  },
+  {
+    "id": 8,
+    "tipo": "situacao_problema",
+    "enunciado": "Um artigo publicado em uma revista de Psicologia da Saúde comparou os níveis de ansiedade pré-prova entre dois grupos de universitários, utilizando um teste de significância estatística (Teste T independente). Os autores reportaram um valor de p = 0,022. Considerando o nível de significância padrão adotado em ciências sociais (p < 0,05), qual é a interpretação correta deste resultado?",
+    "alternativas": [
+      "A) A diferença observada não é estatisticamente significativa.",
+      "B) O resultado sugere que a hipótese nula deve ser obrigatoriamente confirmada.",
+      "C) A probabilidade de a diferença encontrada ser obra do puro acaso é altíssima.",
+      "D) O teste prova inquestionavelmente uma correlação perfeita entre as variáveis dependentes.",
+      "E) A diferença observada entre os grupos é estatisticamente significativa e a hipótese nula é rejeitada."
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. Na inferência estatística, quando o valor-p (0,022) é inferior a 0,05, concluímos que há uma diferença estatisticamente significativa entre os grupos, permitindo aos pesquisadores rejeitar a hipótese nula de que o resultado foi gerado pelo acaso."
+  },
+  {
+    "id": 9,
+    "tipo": "situacao_problema",
+    "enunciado": "Durante a construção de um projeto de pesquisa, um estudante encontra um artigo de 2021 muito relevante para o seu referencial teórico. Ele copia dois parágrafos inteiros do artigo para o seu texto, substituindo três palavras por sinônimos, e não insere qualquer citação ou referência ao autor original nas normas ABNT. Diante do rigor da metodologia científica, tal prática:",
+    "alternativas": [
+      "A) É tolerada, pois em projetos e TCCs o conhecimento base já é considerado de domínio público.",
+      "B) É justificada, desde que o estudante inclua o link do artigo na lista de referências ao final da monografia.",
+      "C) Configura plágio e fere a integridade científica, representando a apropriação intelectual indevida.",
+      "D) É um erro apenas de formatação visual (ABNT), sem implicações éticas ou punitivas.",
+      "E) Caracteriza o que metodologicamente se chama de paráfrase acadêmica autoral direta."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Copiar trechos literais de outra obra ou tentar camuflar a cópia alterando poucas palavras (o chamado plágio mosaico), sem dar o devido crédito por meio de citações formais, configura plágio acadêmico, uma violação grave da ética em pesquisa."
+  },
+  {
+    "id": 10,
+    "tipo": "assercao_razao",
+    "enunciado": "Analise as asserções a seguir e a relação proposta entre elas:\n\nI. A tradição epistemológica do Positivismo exerceu forte influência no surgimento da Psicologia Científica (como visto no Behaviorismo metodológico), na tentativa de garantir o rigor idêntico ao das ciências naturais.\nPORQUE\nII. Para o modelo de pesquisa positivista, o rigor exige que haja um distanciamento absoluto entre o pesquisador e o objeto de estudo, considerando como científico apenas o que é empiricamente observável, quantificável e livre de subjetividades.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Ambas as asserções são verdadeiras e a II explica corretamente a I. O positivismo dita a regra da mensuração objetiva e distanciamento (asserção II). É exatamente essa exigência que moldou os esforços iniciais da psicologia (como no behaviorismo) de se afastar do estudo subjetivo da consciência para focar apenas no comportamento publicamente observável (asserção I)."
+  },
+  {
+    "id": 11,
+    "tipo": "situacao_problema",
+    "enunciado": "Em uma disciplina de metodologia científica, estudantes analisam o clássico exemplo do 'Peru Indutivista' (citado por Chalmers). O peru observa durante meses que é alimentado todos os dias às 9h da manhã, independentemente do clima. Ele conclui, por lógica indutiva, que 'sempre serei alimentado às 9h'. No entanto, na véspera do Dia de Ação de Graças, em vez de ser alimentado, ele vai para o forno. Na filosofia da ciência, esse exemplo demonstra que:",
+    "alternativas": [
+      "A) A repetição contínua de observações é o único método seguro para confirmar leis universais absolutas.",
+      "B) A ciência deve se basear apenas na observação empírica passiva, rejeitando qualquer teoria prévia.",
+      "C) O senso comum é perfeitamente suficiente para produzir conhecimento científico irrefutável.",
+      "D) Generalizações indutivas podem falhar, pois a repetição passada não garante a regularidade futura.",
+      "E) A observação empírica sempre antecede a formulação da teoria científica."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. O problema da indução mostra que não importa quantas vezes observemos um fenômeno ocorrendo de determinada maneira no passado (como os cisnes brancos ou a comida às 9h), isso não garante logicamente que a próxima observação será igual."
+  },
+  {
+    "id": 12,
+    "tipo": "assercao_razao",
+    "enunciado": "Ao avaliar a história da psicanálise e de outras correntes, um pesquisador observa que certas teorias não são abandonadas diante de críticas ou dados empíricos contraditórios, mas são ajustadas com novas explicações complementares. Analise as asserções com base na teoria de Imre Lakatos:\n\nI. Os programas de pesquisa utilizam um 'cinturão protetor' para lidar com anomalias sem descartar a teoria principal.\nPORQUE\nII. Esse cinturão cria hipóteses auxiliares que preservam e blindam o núcleo teórico central do programa contra refutações diretas.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Lakatos argumenta que grandes teorias (programas de pesquisa) possuem um 'núcleo duro' intocável. Para protegê-lo de falhas (anomalias), os cientistas criam um 'cinturão protetor' de hipóteses auxiliares, o que torna as duas asserções corretas e conectadas."
+  },
+  {
+    "id": 13,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudante pretende seguir carreira acadêmica e deseja compreender as exigências metodológicas de diferentes níveis de formação. Ao comparar uma Dissertação de Mestrado com uma Tese de Doutorado, a principal diferença esperada pela comunidade científica em relação aos objetivos e à originalidade é que:",
+    "alternativas": [
+      "A) A dissertação não exige revisão bibliográfica, enquanto a tese se baseia inteiramente em autores clássicos.",
+      "B) A tese exige uma investigação original que traga um avanço ou contribuição inédita para a área, o que não é obrigatoriedade na dissertação.",
+      "C) A dissertação deve, obrigatoriamente, utilizar métodos quantitativos, e a tese foca-se em métodos qualitativos.",
+      "D) Ambos os trabalhos possuem exatamente o mesmo nível de exigência quanto ao ineditismo do tema.",
+      "E) A tese de doutorado foca-se na revisão de literatura já existente, sendo uma monografia de maior extensão estrutural."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. Enquanto a dissertação (mestrado) exige o domínio do método de pesquisa e reflexão fundamentada (podendo rever uma realidade conhecida de uma nova forma), a tese (doutorado) exige ineditismo, devendo apresentar uma descoberta original ou avanço significativo no campo do saber."
+  },
+  {
+    "id": 14,
+    "tipo": "multipla_escolha",
+    "enunciado": "Ao estruturar o desenho de uma pesquisa, um psicólogo decide adotar uma abordagem estritamente quantitativa para investigar o impacto do uso de telas na qualidade do sono de adolescentes. Sobre a pesquisa quantitativa, analise as assertivas abaixo:\n\nI. Busca testar hipóteses pré-definidas.\nII. Utiliza análise estatística para interpretar os dados.\nIII. Prioriza a compreensão da subjetividade e dos significados vividos pelos participantes.\nIV. Busca, a partir de amostras representativas, a generalização dos resultados para uma população maior.",
+    "alternativas": [
+      "A) II e III estão corretas.",
+      "B) I e III estão corretas.",
+      "C) I, II e IV estão corretas.",
+      "D) I, III e IV estão corretas.",
+      "E) Todas as assertivas estão corretas."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A assertiva III é a única falsa, pois focar na subjetividade e nos significados individuais é o objetivo primário da pesquisa Qualitativa, e não da Quantitativa (que foca em mensuração, testes e generalização)."
+  },
+  {
+    "id": 15,
+    "tipo": "situacao_problema",
+    "enunciado": "Durante uma pesquisa em psicologia experimental sobre percepção visual em ambientes urbanos, um pesquisador observa que os participantes reconhecem objetos complexos (como 'um sofá velho') de imediato, sem precisarem analisar mentalmente e de forma separada a cor, a forma e a textura para depois montarem a imagem. À luz da fenomenologia de Maurice Merleau-Ponty, esse fenômeno indica que:",
+    "alternativas": [
+      "A) A percepção resulta unicamente de inferências cognitivas posteriores à recepção de dados sensoriais brutos.",
+      "B) Os estímulos são obrigatoriamente processados de forma isolada antes da integração mental.",
+      "C) A consciência é puramente passiva diante dos estímulos ambientais desorganizados.",
+      "D) O conhecimento científico exato e prévio precede a experiência perceptiva do sujeito.",
+      "E) A percepção já é apresentada como algo significativo e integrado desde o início da experiência no mundo."
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. Para Merleau-Ponty, a percepção não é uma soma de sensações isoladas. Nós já percebemos o mundo de forma estruturada e dotada de sentido; o objeto aparece para a nossa consciência já integrado na sua totalidade (vemos 'um sofá' e não 'manchas marrons num formato retangular')."
+  },
+  {
+    "id": 16,
+    "tipo": "situacao_problema",
+    "enunciado": "Um pesquisador decide comparar os níveis de estresse, medidos por uma escala psicométrica contínua, entre três grupos distintos de estudantes de psicologia: calouros (1º período), intermediários (5º período) e concluintes (10º período). Considerando o desenho da pesquisa e o tipo de variável, o teste estatístico mais adequado para comparar as médias desses três grupos simultaneamente é:",
+    "alternativas": [
+      "A) Correlação de Pearson.",
+      "B) Teste t de Student independente.",
+      "C) Análise de Variância (ANOVA).",
+      "D) Regressão logística.",
+      "E) Teste Qui-quadrado."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A ANOVA (Análise de Variância) é o teste estatístico paramétrico adequado quando precisamos comparar as médias de uma variável dependente contínua (nível de estresse) através de TRÊS ou mais grupos independentes (calouros, intermediários e concluintes). O Teste t só serve para comparar dois grupos."
+  },
+  {
+    "id": 17,
+    "tipo": "assercao_razao",
+    "enunciado": "Um estudo estatístico identificou uma forte associação entre o aumento do tempo de uso de redes sociais e o aumento dos níveis de ansiedade em jovens adultos. No entanto, os pesquisadores publicaram uma ressalva metodológica. Analise as asserções:\n\nI. Constatar uma correlação estatística entre duas variáveis não implica obrigatoriamente em causalidade direta.\nPORQUE\nII. Outras variáveis não observadas (variáveis de confusão) podem explicar a associação, ou a direção da causa pode ser inversa (a ansiedade causar o aumento do uso das redes).",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. 'Correlação não é causalidade' é uma das regras de ouro da estatística (I é verdadeira). O fato de duas coisas caminharem juntas não prova que A causa B; C pode causar ambas, ou B pode causar A (II é verdadeira e justifica a I)."
+  },
+  {
+    "id": 18,
+    "tipo": "assercao_razao",
+    "enunciado": "A ética em pesquisa com seres humanos na psicologia é inegociável e regulamentada por resoluções rigorosas. Analise as asserções abaixo:\n\nI. O Termo de Consentimento Livre e Esclarecido (TCLE) é obrigatório na maioria das pesquisas que envolvem seres humanos.\nPORQUE\nII. Ele atua como um mecanismo ético que garante que os participantes conheçam os reais objetivos, os procedimentos e os potenciais riscos da pesquisa antes de decidirem participar.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Ambas são verdadeiras e se justificam. O TCLE é o documento central da ética em pesquisa, assegurando o princípio da autonomia, para que o sujeito não seja tratado apenas como um meio para os fins do pesquisador."
+  },
+  {
+    "id": 19,
+    "tipo": "situacao_problema",
+    "enunciado": "Um grupo de pesquisa decide realizar um estudo sobre um fenômeno psicológico muito recente e pouco documentado na literatura acadêmica: o impacto de realidades virtuais imersivas na percepção de isolamento social. Como há pouquíssima teoria prévia sobre o tema, os pesquisadores farão entrevistas para tentar criar maior familiaridade com o problema e formular hipóteses futuras. Segundo Gil (1999), quanto aos objetivos, esta pesquisa classifica-se como:",
+    "alternativas": [
+      "A) Pesquisa Descritiva.",
+      "B) Pesquisa Explicativa.",
+      "C) Pesquisa Exploratória.",
+      "D) Pesquisa-ação.",
+      "E) Estudo Censitário."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Pesquisas exploratórias são realizadas quando o tema é pouco conhecido. Seu objetivo é exatamente adquirir maior familiaridade com o fenômeno para tornar o problema mais explícito e permitir a construção de hipóteses para estudos futuros."
+  },
+  {
+    "id": 20,
+    "tipo": "situacao_problema",
+    "enunciado": "Em um estudo sobre desigualdade social e desenvolvimento infantil, um pesquisador amparado na perspectiva teórica de Karl Marx propõe analisar o fenômeno partindo das manifestações caóticas e superficiais da realidade diária para, progressivamente, identificar as determinações econômicas e estruturais profundas que o geram, e então retornar à realidade de forma compreendida. Esse movimento metodológico é conhecido como:",
+    "alternativas": [
+      "A) Indução empírica positivista.",
+      "B) Método da variação imaginativa de Husserl.",
+      "C) Falseamento sistemático e eliminação de erros.",
+      "D) Movimento do empírico/abstrato para o concreto pensado.",
+      "E) Reducionismo psicobiológico."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. No materialismo histórico-dialético (marxismo), o pesquisador começa com a visão caótica e abstrata da realidade. Através da análise metodológica, ele decompõe esse todo, entende as relações estruturais (como a economia e as classes) e retorna ao objeto, compreendendo-o agora como uma totalidade rica e concreta ('o concreto pensado')."
+  },
+  {
+    "id": 21,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudante de psicologia está redigindo a fundamentação teórica de seu Trabalho de Conclusão de Curso (TCC). Ele lê um parágrafo de um artigo científico, compreende a ideia e reescreve o trecho com suas próprias palavras (paráfrase), mas decide não inserir a citação do autor original, acreditando que, por ter mudado as palavras, a ideia agora lhe pertence. Do ponto de vista da ética e da metodologia científica, essa prática:",
+    "alternativas": [
+      "A) É considerada correta, pois a paráfrase isenta o autor da obrigatoriedade de citar a fonte primária.",
+      "B) É recomendada para evitar o excesso de citações formais que podem poluir o aspecto visual do trabalho.",
+      "C) Configura plágio de ideias, pois a autoria intelectual do conceito original não foi devidamente creditada.",
+      "D) É aceitável apenas em trabalhos de graduação, sendo proibida em dissertações e teses.",
+      "E) Demonstra domínio do conteúdo, configurando uma escrita 100% autoral e independente."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. O plágio não se limita à cópia literal (copiar e colar). Apropriar-se de uma ideia, conceito ou estrutura de pensamento de outro autor e reescrevê-la com as suas palavras (paráfrase) sem dar o crédito adequado também é plágio intelectual."
+  },
+  {
+    "id": 22,
+    "tipo": "assercao_razao",
+    "enunciado": "A estatística inferencial é fundamental para a análise de dados quantitativos em pesquisas psicológicas. Analise as asserções abaixo:\n\nI. Em um teste estatístico, obter um valor de p < 0,05 indica que o resultado alcançou significância estatística.\nPORQUE\nII. Esse valor sugere que há uma probabilidade muito baixa (menos de 5%) de que a diferença ou associação observada tenha ocorrido por puro acaso.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Ambas as afirmativas são verdadeiras e estão conectadas. O limite de p < 0,05 é a convenção científica para rejeitar a hipótese nula exatamente porque indica que o resultado tem menos de 5% de chance de ser um 'falso positivo' gerado aleatoriamente."
+  },
+  {
+    "id": 23,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudo epidemiológico de grande escala demonstrou uma forte correlação estatística positiva entre o número de horas que adolescentes passam nas redes sociais e os índices de transtornos de ansiedade. Um jornal noticiou a pesquisa com a manchete: 'Comprovado: Redes sociais causam ansiedade em jovens!'. Metodologicamente, a manchete do jornal comete um erro porque:",
+    "alternativas": [
+      "A) Correlações positivas indicam que as variáveis diminuem juntas, o que contradiz a manchete.",
+      "B) Uma correlação só pode estabelecer causa e efeito se for uma correlação negativa perfeita.",
+      "C) Estudos epidemiológicos não utilizam estatística, invalidando o uso de variáveis dependentes.",
+      "D) Correlação indica apenas associação matemática; não prova causalidade, pois a ansiedade pode causar o uso da rede, ou uma terceira variável pode influenciar ambas.",
+      "E) Variáveis comportamentais como 'ansiedade' não podem ser analisadas quantitativamente."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. 'Correlação não implica causalidade'. O fato de duas variáveis crescerem juntas não prova que uma é a causa exclusiva da outra. Pode haver a ordem inversa (jovens ansiosos buscam mais as redes) ou variáveis de confusão (como isolamento social) causando ambas."
+  },
+  {
+    "id": 24,
+    "tipo": "multipla_escolha",
+    "enunciado": "Um grupo de estudantes debate sobre o propósito da ciência. Alguns afirmam que o objetivo do método científico é 'descobrir verdades absolutas e definitivas sobre o comportamento humano'. Com base na epistemologia de Karl Popper, essa visão está:",
+    "alternativas": [
+      "A) Correta, pois o princípio da verificação lógica permite provar empiricamente que uma teoria é inquestionável.",
+      "B) Correta, pois os paradigmas científicos, uma vez estabelecidos, nunca mais sofrem alterações.",
+      "C) Incorreta, pois para Popper a ciência não atinge a verdade absoluta, mas avança por meio da eliminação contínua de erros (falsificacionismo).",
+      "D) Incorreta, pois a ciência deve se limitar a descrever as essências através da redução fenomenológica.",
+      "E) Correta, pois o indutivismo garante que a repetição de um evento o torna uma lei natural eterna."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Para Popper, a ciência é um processo de eliminação de erros. As teorias científicas não são verdades definitivas, mas sim as melhores hipóteses que temos até que alguém consiga provar que elas estão erradas (falseá-las)."
+  },
+  {
+    "id": 25,
+    "tipo": "situacao_problema",
+    "enunciado": "Um pesquisador deseja realizar um estudo completo sobre o Burnout em professores da rede pública. Para isso, ele aplica primeiro uma escala psicométrica padronizada (quantitativa) em 500 professores para medir a prevalência da síndrome. Em seguida, ele seleciona os 10 professores com maiores pontuações e realiza entrevistas em profundidade (qualitativas) para compreender suas experiências subjetivas de esgotamento. Esse desenho metodológico caracteriza uma:",
+    "alternativas": [
+      "A) Pesquisa exclusivamente experimental.",
+      "B) Investigação fenomenológica pura.",
+      "C) Pesquisa de métodos mistos.",
+      "D) Pesquisa-ação interventiva.",
+      "E) Revisão sistemática da literatura."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A pesquisa de métodos mistos (mixed methods) ocorre exatamente quando o pesquisador combina, no mesmo estudo, a coleta e a análise de dados quantitativos (escala/estatística) com dados qualitativos (entrevistas/narrativas) para obter uma visão mais completa do fenômeno."
+  },
+  {
+    "id": 26,
+    "tipo": "situacao_problema",
+    "enunciado": "Durante uma supervisão clínica, um estudante comenta que tem dificuldade em separar o que é do paciente e o que é o 'mundo real', pois o paciente descreve coisas que não fazem sentido objetivo. O supervisor introduz o conceito de 'Intencionalidade da Consciência', originado por Brentano e fundamental na Fenomenologia de Husserl. Esse conceito significa que:",
+    "alternativas": [
+      "A) O paciente tem a intenção deliberada e consciente de mentir sobre a sua realidade para se proteger.",
+      "B) A consciência é como uma caixa vazia que armazena memórias de forma puramente passiva.",
+      "C) A consciência humana é determinada exclusivamente pela classe social e pelas condições materiais.",
+      "D) O pesquisador ou terapeuta deve intencionalmente manipular o comportamento observável do sujeito.",
+      "E) A consciência não existe isolada; ela é sempre 'consciência de algo', estando inevitavelmente direcionada e correlacionada ao mundo."
+    ],
+    "resposta_correta": 4,
+    "explicacao": "Correta: E. Na fenomenologia, a intencionalidade é o princípio de que a consciência nunca está vazia, ela está sempre projetada ou direcionada para um objeto. Isso rompe a velha dicotomia que separa o sujeito (mente isolada) do objeto (mundo)."
+  },
+  {
+    "id": 27,
+    "tipo": "situacao_problema",
+    "enunciado": "Em uma investigação sobre saúde mental universitária, formulou-se a seguinte hipótese: 'O estresse acadêmico afeta negativamente o desempenho escolar'. No entanto, os pesquisadores decidiram adicionar uma nova variável, assumindo que a presença de um bom 'suporte social' (família e amigos) pode atenuar ou alterar a força dessa relação negativa entre estresse e desempenho. No desenho dessa pesquisa, o 'suporte social' assume o papel de:",
+    "alternativas": [
+      "A) Variável independente, pois é a causa direta do estresse.",
+      "B) Variável dependente, pois é o resultado final medido.",
+      "C) Variável moderadora, pois interfere e modifica a relação entre a causa e o efeito.",
+      "D) Variável de confusão, que deve ser totalmente eliminada do estudo.",
+      "E) Variável binária, pois só admite duas opções de resposta."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. A variável moderadora atua no meio do caminho, alterando a intensidade ou a direção da relação entre a variável independente (estresse) e a dependente (desempenho). O suporte social atua como um 'amortecedor'."
+  },
+  {
+    "id": 28,
+    "tipo": "assercao_razao",
+    "enunciado": "Analise as asserções sobre os conceitos de validade em delineamentos de pesquisa:\n\nI. Em um experimento quantitativo, atingir uma altíssima validade interna muitas vezes resulta na redução da validade externa da pesquisa.\nPORQUE\nII. O controle extremamente rigoroso de todas as variáveis no laboratório (que garante a validade interna) pode tornar a situação tão artificial que os resultados dificilmente poderão ser generalizados para a vida real (validade externa).",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A validade interna garante que o efeito foi causado *apenas* pela sua manipulação. A validade externa é o poder de generalizar isso. Ao controlar tudo num laboratório estéril (alta interna), você distancia a pesquisa do caos do mundo real, perdendo capacidade de generalização (baixa externa)."
+  },
+  {
+    "id": 29,
+    "tipo": "multipla_escolha",
+    "enunciado": "O professor Leandro apresentou aos alunos as características que compõem o método científico moderno. Avalie as assertivas abaixo sobre a natureza da ciência:\n\nI. O método científico envolve a formulação clara de problemas e hipóteses.\nII. As teorias e hipóteses devem ser testadas empiricamente na realidade.\nIII. O objetivo final da ciência é produzir dogmas e verdades absolutas incontestáveis.\nIV. O conhecimento científico é dinâmico e está permanentemente sujeito a revisões e refutações.",
+    "alternativas": [
+      "A) I, II e III apenas.",
+      "B) I e III apenas.",
+      "C) II e III apenas.",
+      "D) I, II e IV apenas.",
+      "E) Todas as assertivas estão corretas."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. Apenas a assertiva III está incorreta. A ciência diferencia-se do dogma religioso ou do senso comum exatamente por não produzir verdades absolutas incontestáveis. Todo conhecimento científico é provisório e aberto à refutação (IV)."
+  },
+  {
+    "id": 30,
+    "tipo": "situacao_problema",
+    "enunciado": "Diferentes trabalhos científicos cumprem diferentes papéis na jornada acadêmica. Uma estudante que está concluindo a graduação em Psicologia elabora um Trabalho de Conclusão de Curso (TC/Monografia) e, posteriormente, seu orientador sugere que ela transforme esse trabalho em um artigo científico. A principal diferença estrutural e de finalidade entre esses dois formatos é:",
+    "alternativas": [
+      "A) A monografia dispensa referencial teórico e normas da ABNT, focando apenas na opinião pessoal do aluno.",
+      "B) O artigo científico é mais sintético, enxuto e voltado primordialmente à comunicação pública dos resultados aos pares na comunidade científica.",
+      "C) O artigo científico não precisa passar por avaliação ou crivo de revisores, ao contrário da monografia.",
+      "D) A monografia exige a criação de uma teoria totalmente inédita no mundo, papel que não cabe ao artigo.",
+      "E) Não há nenhuma diferença; ambos possuem a mesma contagem de páginas e são publicados obrigatoriamente em revistas."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. A monografia é um trabalho escolar mais extenso para avaliar a conclusão de um curso. O artigo científico é um formato projetado para revistas acadêmicas: ele é direto, sintético e tem como fim socializar a descoberta/reflexão científica com a comunidade (pares)."
+  },
+  {
+    "id": 31,
+    "tipo": "situacao_problema",
+    "enunciado": "Dois psicólogos clínicos analisam a mesma gravação em vídeo do comportamento de uma criança durante uma sessão lúdica. O primeiro, de orientação behaviorista radical, anota as frequências de estímulo e resposta motora. O segundo, de orientação psicanalítica, relata indícios de projeção de conflitos inconscientes nas escolhas dos brinquedos. Na perspectiva da filosofia da ciência moderna, essa divergência ilustra que:",
+    "alternativas": [
+      "A) A observação científica é neutra e pura, e um dos psicólogos cometeu um erro de atenção deliberado.",
+      "B) A teoria precede e orienta a observação empírica, ou seja, o referencial teórico do pesquisador funciona como uma lente que define o que será observado e como os dados serão interpretados.",
+      "C) A psicologia não pode ser considerada ciência, visto que nas ciências exatas a observação é sempre idêntica para todos os observadores.",
+      "D) O método indutivo garante que ambos chegarão à mesma conclusão geral após muitas observações.",
+      "E) Apenas a observação behaviorista tem validade fenomênica, visto que suspende os julgamentos prévios."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. A filosofia da ciência contemporânea (como em Popper e Kuhn) derrubou o mito da observação neutra. Toda observação é impregnada de teoria (theory-laden). O que o cientista vê depende da lente teórica através da qual ele está olhando o fenômeno."
+  },
+  {
+    "id": 32,
+    "tipo": "multipla_escolha",
+    "enunciado": "Um grupo de pesquisa em Psicologia insiste em manter e defender uma teoria específica de aprendizagem, mesmo sem apresentar resultados empíricos novos há décadas. Toda vez que um experimento falha em comprovar a teoria, o grupo ajusta suas explicações com justificativas pontuais para contornar a falha, sem expandir o conhecimento real sobre o tema. Na filosofia de Imre Lakatos, esse cenário caracteriza:",
+    "alternativas": [
+      "A) Uma revolução científica iminente.",
+      "B) Um programa de pesquisa progressivo.",
+      "C) A prática da redução fenomenológica.",
+      "D) Um programa de pesquisa degenerescente.",
+      "E) Uma confirmação do materialismo histórico."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. Para Lakatos, um programa de pesquisa torna-se 'degenerescente' quando para de prever fatos novos e passa apenas a criar hipóteses 'ad hoc' (desculpas) para se proteger de falhas e refutações."
+  },
+  {
+    "id": 33,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudo estatístico do curso de Psicologia investigou o nível de Burnout entre universitários, testando se o fato de o aluno 'trabalhar' ou 'não trabalhar' afetava o esgotamento. O Teste T retornou um valor de p = 0,607. Posteriormente, testou-se o 'tipo de transporte' utilizado pelo aluno, cuja ANOVA resultou em um valor de p = 0,019. Como o pesquisador deve interpretar a significância desses achados na sua tomada de decisão?",
+    "alternativas": [
+      "A) Ambos os resultados são estatisticamente significativos, rejeitando a hipótese nula nos dois casos.",
+      "B) O fato de trabalhar impacta significativamente o Burnout, enquanto o transporte não tem efeito algum.",
+      "C) O valor p = 0,607 indica ausência de diferença estatisticamente significativa entre quem trabalha e não trabalha; já o p = 0,019 indica que o tipo de transporte afeta significativamente o Burnout.",
+      "D) O valor de p não serve para tomar decisões estatísticas, sendo apenas uma métrica descritiva de amostragem.",
+      "E) A hipótese nula foi confirmada em p=0,019, o que significa que o tipo de transporte não afeta a ansiedade."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. Como o limite padrão é p < 0,05, o valor de 0,607 indica que não há diferença estatística (qualquer diferença observada pode ser acaso). Já o valor de 0,019 é menor que 0,05, confirmando que há uma diferença estatisticamente significativa causada pelo tipo de transporte."
+  },
+  {
+    "id": 34,
+    "tipo": "assercao_razao",
+    "enunciado": "Analise as asserções a seguir relativas à utilização de métodos mistos em pesquisa psicológica:\n\nI. Abordagens de métodos mistos (mixed methods) combinam estratégias de pesquisa qualitativas e quantitativas dentro do mesmo desenho de estudo.\nPORQUE\nII. Essa combinação permite ao pesquisador triangular os dados, compreendendo tanto a dimensão objetiva e generalizável do fenômeno quanto os sentidos subjetivos e contextuais vividos pelos participantes.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. A pesquisa mista surge exatamente da necessidade de cobrir as lacunas deixadas por abordagens únicas. A assertiva II justifica a I porque o objetivo de misturar os métodos é justamente obter as vantagens de ambos (generalização quantitativa e profundidade qualitativa)."
+  },
+  {
+    "id": 35,
+    "tipo": "situacao_problema",
+    "enunciado": "Em um estudo clínico para testar a eficácia de uma nova terapia cognitivo-comportamental para a depressão (Variável Independente), o pesquisador percebe que fatores externos, como a idade do paciente e o uso prévio de medicação psiquiátrica, podem interferir nos resultados finais do grau de depressão (Variável Dependente). Para evitar que esses fatores mascarem a real eficácia da terapia, o pesquisador deve tratá-los como:",
+    "alternativas": [
+      "A) Variáveis preditas, eliminando a sua variância do estudo.",
+      "B) Variáveis dependentes secundárias, para medir novos efeitos.",
+      "C) Hipóteses auxiliares irrefutáveis.",
+      "D) Variáveis de controle, isolando estatisticamente ou metodologicamente seu efeito para acessar verdadeiramente a relação principal.",
+      "E) Variáveis discretas não-métricas exclusivas."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. Variáveis de controle precisam ser mantidas constantes ou 'controladas' pelo pesquisador (como parear os grupos por idade) para garantir que o efeito medido na variável dependente foi causado apenas pela variável independente que está sendo testada."
+  },
+  {
+    "id": 36,
+    "tipo": "assercao_razao",
+    "enunciado": "A validade e a confiabilidade de instrumentos e testes psicológicos são rigorosamente cobradas pela comunidade científica. Analise as asserções:\n\nI. Instrumentos de medida em psicologia (como escalas de ansiedade ou depressão) podem ser construídos e aplicados livremente sem a necessidade de padronização, contanto que o pesquisador tenha experiência clínica.\nPORQUE\nII. Instrumentos não validados interferem diretamente nos resultados, impossibilitando garantir se o teste realmente mede o construto que se propõe a medir.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. A asserção I é falsa, pois instrumentos psicológicos EXIGEM rigorosa padronização, validação e estudos de confiabilidade (não podem ser aplicados livremente). A asserção II é verdadeira e descreve exatamente o perigo de não validar um instrumento (ele perde a validade de construto)."
+  },
+  {
+    "id": 37,
+    "tipo": "situacao_problema",
+    "enunciado": "Um estudante em fase de TCC relata que escolheu a Fenomenologia para embasar sua coleta de dados qualitativa. Em sua justificativa metodológica, ele afirma que o objetivo da fenomenologia é 'ir às coisas mesmas' (Zurück zu den Sachen selbst). No contexto de Husserl, essa expressão orienta o pesquisador a:",
+    "alternativas": [
+      "A) Focar apenas nos objetos físicos e materiais em detrimento da psique humana.",
+      "B) Buscar a causa neuroquímica exata por trás dos comportamentos observáveis.",
+      "C) Retornar à essência do fenômeno tal como ele se apresenta originalmente à consciência, livre de explicações científicas abstratas e de pressupostos prévios.",
+      "D) Eliminar toda a subjetividade do paciente, focando apenas no diagnóstico classificatório.",
+      "E) Analisar as contradições históricas da luta de classes que geram os traumas individuais."
+    ],
+    "resposta_correta": 2,
+    "explicacao": "Correta: C. O lema de Husserl 'ir às coisas mesmas' é um apelo para abandonar as especulações e construções teóricas que a ciência impõe sobre a realidade, e voltar a observar os fenômenos exatamente como eles são vividos de forma imediata na experiência consciente."
+  },
+  {
+    "id": 38,
+    "tipo": "situacao_problema",
+    "enunciado": "De acordo com Gil (1999), as pesquisas podem ser classificadas quanto à profundidade dos seus objetivos. Um pesquisador deseja não apenas descrever como uma comunidade acadêmica vive o adoecimento psíquico, mas tentar identificar os fatores e as raízes profundas que determinam e contribuem ativamente para a ocorrência desse fenômeno, estabelecendo lógicas de causa e efeito. Essa pesquisa seria classificada como:",
+    "alternativas": [
+      "A) Pesquisa Exploratória.",
+      "B) Pesquisa Descritiva Pura.",
+      "C) Pesquisa-ação Participante.",
+      "D) Pesquisa Explicativa.",
+      "E) Estudo Bibliográfico Sistemático."
+    ],
+    "resposta_correta": 3,
+    "explicacao": "Correta: D. A Pesquisa Explicativa é a que atinge a maior profundidade de conhecimento da realidade, pois não se limita a descrever o cenário, mas tenta explicar a 'razão' e as 'causas' (causação probabilística) que geram o fenômeno."
+  },
+  {
+    "id": 39,
+    "tipo": "assercao_razao",
+    "enunciado": "A definição e a escolha da amostra determinam o grau de generalização dos resultados de um estudo empírico. Analise as asserções:\n\nI. As amostragens probabilísticas (como a aleatória simples e a estratificada) são as mais recomendadas em pesquisas quantitativas que buscam alta validade externa.\nPORQUE\nII. Ao garantir que todos os membros da população tenham uma chance matemática conhecida de participar do estudo, reduzem-se os vieses de seleção e permite-se que as inferências sejam generalizadas para toda a população.",
+    "alternativas": [
+      "A) As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B) As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C) A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D) A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E) As asserções I e II são proposições falsas."
+    ],
+    "resposta_correta": 0,
+    "explicacao": "Correta: A. Ambas são corretas e se justificam perfeitamente. Em estatística inferencial, apenas a amostra probabilística (onde ocorre o sorteio aleatório, como na afirmação II) permite pegar os resultados de uma pequena amostra e estendê-los (generalizá-los com validade externa) para a população inteira (afirmação I)."
+  },
+  {
+    "id": 40,
+    "tipo": "multipla_escolha",
+    "enunciado": "Ao comparar a visão do Círculo de Viena (Positivismo Lógico) com o Racionalismo Crítico de Karl Popper a respeito de como diferenciar a Ciência daquilo que não é ciência (critério de demarcação), um estudante deve concluir que:",
+    "alternativas": [
+      "A) Ambos concordavam plenamente que a indução é o único caminho lógico para o progresso científico.",
+      "B) O Positivismo Lógico demarcava a ciência pelo Princípio da Verificação empírica, enquanto Popper propôs a Falseabilidade (eliminação de erros) como critério central.",
+      "C) Popper defendia que a ciência avança pela acumulação de verdades positivas, enquanto os positivistas negavam a matemática.",
+      "D) O Positivismo Lógico baseava-se inteiramente na Teoria Dialética Marxista para explicar a natureza.",
+      "E) Ambas as escolas acreditavam que o paradigma vigente só cai durante revoluções científicas agudas, como propôs Kuhn."
+    ],
+    "resposta_correta": 1,
+    "explicacao": "Correta: B. O Positivismo Lógico achava que o papel da ciência era 'verificar' (confirmar como verdadeiras) as teorias através da experiência empírica. Popper destrói isso, afirmando que nunca podemos confirmar de forma definitiva uma teoria geral, mas podemos testá-la duramente para tentar falseá-la."
+  },
+  {
+    "id": 41,
+    "tipo": "discursiva",
+    "enunciado": "Um estudante lê que a transição da visão de mente como 'caixa-preta' (Behaviorismo) para o foco nos processos mentais internos (Cognitivismo) foi uma mudança abrupta e transformadora na Psicologia. Utilizando os conceitos de Thomas Kuhn, explique como ocorre uma 'Revolução Científica' e o que acontece com o modelo teórico anterior.",
+    "resposta_esperada": "Para Thomas Kuhn, a 'ciência normal' opera debaixo de um paradigma (modelo) dominante. Quando começam a surgir problemas e dados empíricos que esse paradigma não consegue explicar (chamados de anomalias), a comunidade entra em crise. Uma Revolução Científica ocorre quando um novo paradigma surge e consegue resolver essas anomalias. Esse novo modelo é 'incomensurável' (incompatível) com o anterior; logo, a visão de mundo daquela ciência muda radicalmente e o paradigma antigo é superado ou abandonado (como ocorreu na transição do behaviorismo estrito para o cognitivismo)."
+  },
+  {
+    "id": 42,
+    "tipo": "discursiva",
+    "enunciado": "Ao observar que 50 pacientes com fobia social apresentaram melhora drástica após uma nova intervenção comportamental, um pesquisador escreve em seu artigo: 'Comprovamos que esta intervenção sempre curará a fobia social'. Critique essa afirmação com base nas limitações do indutivismo ingênuo (o problema da indução) discutido por Chalmers.",
+    "resposta_esperada": "O método indutivo parte de observações repetidas de casos particulares para tentar formular leis universais absolutas. A crítica fundamental a essa afirmação (o problema da indução) é que nenhuma quantidade de observações passadas (os 50 pacientes) garante logicamente o futuro ou a totalidade. O fato de ter funcionado 50 vezes não torna logicamente impossível que o 51º paciente não apresente nenhuma melhora. Portanto, a conclusão de que 'sempre curará' é uma generalização inválida do ponto de vista do rigor lógico-científico."
+  },
+  {
+    "id": 43,
+    "tipo": "discursiva",
+    "enunciado": "Um projeto de pesquisa em psicologia propõe medir o constructo da 'felicidade' utilizando exclusivamente a contagem do número de sorrisos por hora observados por câmeras de segurança. Discuta essa abordagem metodológica sob a ótica do positivismo e aponte a principal crítica que um pesquisador fenomenológico faria a esse desenho.",
+    "resposta_esperada": "Sob a ótica positivista, essa pesquisa é vista como rigorosa porque foca apenas no que é material, observável e objetivamente quantificável (comportamento visível), mantendo o distanciamento total entre o pesquisador e o objeto. No entanto, um fenomenólogo faria uma dura crítica a esse 'reducionismo', argumentando que a felicidade é um fenômeno subjetivo complexo e vivido pela consciência. Reduzi-la a movimentos musculares do rosto (sorrisos) esvazia o significado e a essência da experiência humana, ignorando o sentido que a própria pessoa atribui ao seu estado."
+  },
+  {
+    "id": 44,
+    "tipo": "discursiva",
+    "enunciado": "Um aluno deseja iniciar seu TCC afirmando que seu tema de pesquisa é 'Os impactos da pandemia na saúde mental', mas seu orientador (com base nas lições de Braga) alerta que um tema geral não é um 'problema de pesquisa'. Diferencie tema de problema de pesquisa e explique a importância de formular uma pergunta de pesquisa clara antes de iniciar a coleta de dados.",
+    "resposta_esperada": "O 'tema' é o assunto amplo, panorâmico e genérico em que o estudo se insere (ex: saúde mental e pandemia). O 'problema de pesquisa' é um recorte específico, traduzido em formato de uma pergunta clara, viável e delimitada que o pesquisador tentará responder (ex: 'Como o isolamento prolongado afetou os níveis de ansiedade em adolescentes de 15 a 17 anos em Goiânia?'). Formular um bom problema é crucial porque é a espinha dorsal do projeto: ele dita qual será o objetivo geral, a metodologia adequada e que tipo de dados precisarão ser coletados."
+  },
+  {
+    "id": 45,
+    "tipo": "discursiva",
+    "enunciado": "Imagine que você está estruturando um estudo inicial sobre os efeitos psicológicos de uma nova droga sintética recém-descoberta, sobre a qual quase não há artigos publicados. Em seguida, um segundo estudo feito pelo IBGE decide mapear apenas o perfil demográfico de todos os dependentes químicos de um estado. Com base em Gil (1999), classifique e diferencie os dois estudos quanto aos seus objetivos em pesquisa (Exploratória, Descritiva ou Explicativa).",
+    "resposta_esperada": "O primeiro estudo classifica-se como Pesquisa Exploratória, pois lida com um fenômeno muito recente e pouco documentado, tendo como objetivo central aprofundar a familiaridade com o tema, refinar ideias e ajudar a formular hipóteses precisas para o futuro. O segundo estudo é uma Pesquisa Descritiva (estudo de levantamento/censo), pois se limita a traçar características e descrever o perfil ou a distribuição de uma população, sem focar em estabelecer relações complexas de causa e efeito."
+  },
+  {
+    "id": 46,
+    "tipo": "discursiva",
+    "enunciado": "Para testar se a música clássica afeta a velocidade de leitura de crianças, um pesquisador manipula o ambiente com e sem música. No entanto, ele garante rigorosamente que todas as crianças façam o teste na mesma sala, com a mesma iluminação e no mesmo horário da manhã. Identifique a variável independente do estudo e explique qual é a função das demais variáveis controladas pelo pesquisador.",
+    "resposta_esperada": "A Variável Independente (a 'causa' provável manipulada pelo pesquisador) é a presença ou ausência da música clássica. A sala, a iluminação e o horário são 'Variáveis de Controle'. A função de fixar essas variáveis é impedir que elas interfiram nos resultados (variáveis de confusão). Ao isolá-las, o pesquisador garante que qualquer variação observada na velocidade de leitura (Variável Dependente) foi causada apenas pela música, assegurando assim uma alta validade interna ao experimento."
+  },
+  {
+    "id": 47,
+    "tipo": "discursiva",
+    "enunciado": "Uma secretaria municipal de saúde detectou, através de escalas quantitativas, que o abandono de terapias no SUS aumentou 40% no último ano. Para descobrir o motivo, promoveram rodas de conversa (grupos focais qualitativos) com os pacientes que desistiram. Explique a grande vantagem teórica e prática de utilizar um delineamento de pesquisa de 'Métodos Mistos' (Mixed Methods) nesta situação.",
+    "resposta_esperada": "A vantagem central dos métodos mistos é a sua capacidade de triangular dados e compensar as fraquezas de abordagens isoladas. Neste caso, a fase quantitativa apontou a prevalência e a magnitude objetiva do fenômeno (o 'quanto': o aumento alarmante de 40%), algo que os grupos focais não poderiam dimensionar. Contudo, os números sozinhos não explicam as causas humanas desse abandono. A fase qualitativa atua aí para revelar o 'por quê' e o 'como', captando os sentidos subjetivos, as frustrações ou barreiras sistêmicas vivenciadas pelos pacientes."
+  },
+  {
+    "id": 48,
+    "tipo": "discursiva",
+    "enunciado": "Uma pesquisa clínica investigou a correlação entre o consumo semanal de doces e o nível de estresse em estudantes, encontrando uma forte associação positiva. O autor então concluiu: 'Parar de comer doces reduz o estresse'. Metodologicamente, por que é perigoso transformar uma correlação estatística em uma afirmação de causalidade determinística?",
+    "resposta_esperada": "É perigoso (e cientificamente incorreto) inferir causalidade puramente a partir de uma correlação porque duas variáveis estarem juntas não prova que uma causou a outra. O autor ignorou a possibilidade de direcionalidade inversa (pode ser o estresse profundo que gera uma vontade compulsiva por doces, e não o doce que gera estresse) e também ignorou variáveis de confusão ou terceiros fatores (como problemas financeiros), que podem ser a causa real tanto do estresse elevado quanto da má alimentação."
+  },
+  {
+    "id": 49,
+    "tipo": "discursiva",
+    "enunciado": "Um psicólogo social decide investigar as raízes do preconceito em um bairro de periferia. Rejeitando explicações puramente individuais e cognitivas, ele opta pelo método Materialista Histórico-Dialético (Triviños/Marx). Explique, com base na categoria de 'totalidade', como o pesquisador deverá encarar o fenômeno do preconceito nessa comunidade.",
+    "resposta_esperada": "No materialismo histórico e dialético, a categoria de 'totalidade' determina que nenhum fato social ou subjetivo pode ser compreendido de forma isolada, como se fosse um fragmento desligado do mundo. O pesquisador marxista analisará o preconceito não como uma falha individual da mente, mas como um sintoma enraizado em um sistema muito maior. Ele deve relacionar as atitudes preconceituosas daquele bairro à base econômica, às contradições materiais, à luta de classes e à ideologia que a estrutura social capitalista impõe para dividir a comunidade."
+  },
+  {
+    "id": 50,
+    "tipo": "discursiva",
+    "enunciado": "Na escrita da fundamentação teórica de sua monografia, um aluno copia e cola partes da introdução de diversos artigos de autores renomados, troca algumas palavras por sinônimos para 'disfarçar', constrói um texto sequencial e coloca a citação de um livro no final apenas para cumprir a regra da ABNT. Defina o que é plágio na comunicação científica e julgue essa conduta com base na integridade acadêmica.",
+    "resposta_esperada": "Plágio, no contexto da comunicação científica, é a apropriação indevida do trabalho intelectual, ideias, textos ou dados de outra pessoa, apresentando-os como se fossem de autoria própria. A atitude do aluno configura uma fraude grave (frequentemente chamada de 'plágio mosaico'). Trocar palavras por sinônimos não altera a autoria intelectual da ideia original, e adicionar uma citação genérica no final não legitima a cópia não-sinalizada. Essa conduta destrói a integridade acadêmica, pois falsifica a real contribuição autoral e analítica do estudante."
+  }
+
+    ];
+
+// Variáveis de controle de estado
+    let currentBank = 'professor'; 
+    let questoes = bancoProfessor; 
+    let currentIndex = 0;
+    let progresso = {};
+
+    // Função que carrega o progresso do banco selecionado
+    function carregarProgresso() {
+        // Usa uma chave diferente no LocalStorage para cada banco não misturar as notas!
+        progresso = JSON.parse(localStorage.getItem('simul_psico_' + currentBank)) || {
+            respostas: {}, 
+            acertos: 0, 
+            erros: 0
+        };
+    }
+
+    // Função engatilhada quando você muda a opção no menu Dropdown
+// Função engatilhada quando clica numa aba
+    function trocarBanco(bancoSelecionado) {
+        currentBank = bancoSelecionado;
+        
+        // Atualiza o visual das abas (Remove o ativo de todos e coloca no clicado)
+        document.getElementById('tab-professor').classList.remove('active');
+        document.getElementById('tab-ia').classList.remove('active');
+        document.getElementById('tab-' + currentBank).classList.add('active');
+        
+        // Troca a lista de questões
+        if (currentBank === 'professor') {
+            questoes = bancoProfessor;
+        } else {
+            questoes = bancoIA;
+        }
+        
+        currentIndex = 0; // Volta para a questão 1
+        carregarProgresso(); // Puxa as notas daquele banco
+        initQuiz(); // Recarrega a tela
+    }
+    function initQuiz() {
+        carregarProgresso();
+        if(questoes.length === 0) {
+            document.getElementById("enunciado-text").innerText = "As questões não foram coladas no código fonte!";
+            document.getElementById("submit-btn").style.display = "none";
+            return;
+        }
+        document.getElementById("total-questions").innerText = questoes.length;
+        gerarGridNavegacao();
+        atualizarEstatisticas();
+        carregarQuestao();
+    }
+
+    function salvarProgresso() {
+        localStorage.setItem('simul_psico_' + currentBank, JSON.stringify(progresso));
+        atualizarEstatisticas();
+        gerarGridNavegacao();
+    }
+
+    function atualizarEstatisticas() {
+        document.getElementById("score-correct").innerText = progresso.acertos;
+        document.getElementById("score-incorrect").innerText = progresso.erros;
+        let totalRespondidas = progresso.acertos + progresso.erros;
+        let percent = totalRespondidas === 0 ? 0 : Math.round((progresso.acertos / totalRespondidas) * 100);
+        document.getElementById("score-percent").innerText = percent;
+    }
+
+    function gerarGridNavegacao() {
+        const grid = document.getElementById("grid-area");
+        grid.innerHTML = "";
+        questoes.forEach((q, index) => {
+            const btn = document.createElement("button");
+            btn.className = "grid-btn";
+            btn.innerText = index + 1;
+            btn.onclick = () => irParaQuestao(index);
+            
+            if (index === currentIndex) btn.classList.add("current");
+            
+            if (progresso.respostas[q.id] !== undefined) {
+                if (q.tipo === "discursiva") {
+                    btn.classList.add("answered-correct");
+                    btn.style.background = "#3498db";
+                    btn.style.borderColor = "#2980b9";
+                } else {
+                    if (progresso.respostas[q.id] === q.resposta_correta) {
+                        btn.classList.add("answered-correct");
+                    } else {
+                        btn.classList.add("answered-incorrect");
+                    }
+                }
+            }
+            grid.appendChild(btn);
+        });
+    }
+
+    function irParaQuestao(index) {
+        currentIndex = index;
+        carregarQuestao();
+        gerarGridNavegacao();
+    }
+
+    function navegar(direcao) {
+        let novoIndex = currentIndex + direcao;
+        if (novoIndex >= 0 && novoIndex < questoes.length) {
+            irParaQuestao(novoIndex);
+        }
+    }
+
+    function carregarQuestao() {
+        const questao = questoes[currentIndex];
+        document.getElementById("current-question-num").innerText = currentIndex + 1;
+        document.getElementById("enunciado-text").innerText = questao.enunciado;
+        
+        const assercoesArea = document.getElementById("assercoes-area");
+        if(questao.assercoes && questao.assercoes.length > 0) {
+            assercoesArea.style.display = "block";
+            assercoesArea.innerHTML = questao.assercoes.join("<br><br>");
+        } else {
+            assercoesArea.style.display = "none";
+        }
+
+        const optionsArea = document.getElementById("options-area");
+        optionsArea.innerHTML = ""; 
+        
+        const jaRespondida = progresso.respostas[questao.id] !== undefined;
+        const respostaDada = progresso.respostas[questao.id];
+
+        if (questao.tipo === "discursiva") {
+            const textarea = document.createElement("textarea");
+            textarea.id = "resposta-discursiva";
+            textarea.placeholder = "Escreva o seu rascunho de resposta aqui...";
+            textarea.style.width = "100%";
+            textarea.style.minHeight = "150px";
+            textarea.style.padding = "15px";
+            textarea.style.fontFamily = "inherit";
+            textarea.style.fontSize = "1em";
+            textarea.style.borderRadius = "6px";
+            textarea.style.border = "2px solid #ecf0f1";
+            textarea.style.boxSizing = "border-box";
+            textarea.style.marginBottom = "15px";
+            
+            if (jaRespondida) {
+                textarea.value = respostaDada; 
+                textarea.disabled = true;
+                textarea.style.background = "#f8f9fa";
+            }
+            optionsArea.appendChild(textarea);
+
+        } else {
+            questao.alternativas.forEach((alt, index) => {
+                const label = document.createElement("label");
+                label.className = "option-label";
+                if (jaRespondida) {
+                    if (index === questao.resposta_correta) label.classList.add("correct");
+                    else if (index === respostaDada) label.classList.add("incorrect");
+                }
+                
+                const checked = (jaRespondida && respostaDada === index) ? "checked" : "";
+                const disabled = jaRespondida ? "disabled" : "";
+                
+                label.innerHTML = `<input type="radio" name="opcao" value="${index}" ${checked} ${disabled}> ${alt}`;
+                optionsArea.appendChild(label);
+            });
+        }
+
+        document.getElementById("prev-btn").disabled = (currentIndex === 0);
+        document.getElementById("next-btn").disabled = (currentIndex === questoes.length - 1);
+        
+        const submitBtn = document.getElementById("submit-btn");
+        
+        if (jaRespondida) {
+            submitBtn.style.display = "none";
+            mostrarFeedback(questao, respostaDada);
+        } else {
+            submitBtn.style.display = "block";
+            submitBtn.innerText = questao.tipo === "discursiva" ? "Revelar Padrão de Resposta" : "Confirmar Resposta";
+            submitBtn.disabled = false;
+            document.getElementById("feedback-area").style.display = "none";
+        }
+    }
+
+    function verificarResposta() {
+        const questao = questoes[currentIndex];
+
+        if (questao.tipo === "discursiva") {
+            const texto = document.getElementById("resposta-discursiva").value;
+            progresso.respostas[questao.id] = texto; 
+            salvarProgresso();
+            carregarQuestao(); 
+            return;
+        }
+
+        const opcoes = document.getElementsByName("opcao");
+        let selecionada = -1;
+        for (let i = 0; i < opcoes.length; i++) {
+            if (opcoes[i].checked) { selecionada = parseInt(opcoes[i].value); break; }
+        }
+
+        if (selecionada === -1) {
+            alert("Selecione uma alternativa antes de responder!");
+            return;
+        }
+
+        progresso.respostas[questao.id] = selecionada;
+
+        if (selecionada === questao.resposta_correta) { progresso.acertos++; } 
+        else { progresso.erros++; }
+
+        salvarProgresso();
+        carregarQuestao(); 
+    }
+
+    function mostrarFeedback(questao, respostaDada) {
+        const feedbackArea = document.getElementById("feedback-area");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackExp = document.getElementById("feedback-explanation");
+
+        feedbackArea.className = "feedback"; 
+        feedbackArea.style.background = "";
+        feedbackArea.style.borderColor = "";
+        feedbackArea.style.color = "";
+
+        if (questao.tipo === "discursiva") {
+            feedbackArea.style.background = "#e1f5fe";
+            feedbackArea.style.borderColor = "#81d4fa";
+            feedbackArea.style.color = "#01579b";
+            feedbackTitle.innerText = "Padrão de Resposta Esperado pelo Professor:";
+            feedbackExp.innerHTML = questao.resposta_esperada;
+        } else {
+            if (respostaDada === questao.resposta_correta) {
+                feedbackArea.classList.add("correct-box");
+                feedbackTitle.innerText = "Mandou bem! Resposta Correta.";
+            } else {
+                feedbackArea.classList.add("incorrect-box");
+                feedbackTitle.innerText = "Ops! Resposta Incorreta.";
+            }
+            feedbackExp.innerHTML = questao.explicacao;
+        }
+
+        feedbackArea.style.display = "block";
+    }
+
+    function zerarSimulado() {
+        if(confirm(`Tem certeza que deseja apagar todo o seu progresso no banco "${currentBank === 'professor' ? 'Revisão Oficial' : 'Treino Extra'}"? Isso não pode ser desfeito.`)) {
+            localStorage.removeItem('simul_psico_' + currentBank);
+            progresso = { respostas: {}, acertos: 0, erros: 0 };
+            irParaQuestao(0);
+            atualizarEstatisticas();
+        }
+    }
+
+    window.onload = initQuiz;
+</script></body>
+</html>
