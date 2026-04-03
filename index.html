@@ -216,28 +216,68 @@
         .reset-btn:hover { background: #e53e3e; }
 
         /* --- Ajustes de Responsividade para Celulares --- */
+/* --- Ajustes de Responsividade para Celulares --- */
         @media (max-width: 600px) {
-            body { padding: 10px; }
-            .container { padding: 25px 20px; border-radius: 20px; }
+            body { 
+                padding: 10px; 
+                font-size: 14px; /* Diminui o tamanho base de todas as fontes no celular */
+            }
+            .container { 
+                padding: 20px 15px; /* Reduz as bordas brancas para dar mais espaço ao texto */
+                border-radius: 16px; 
+            }
             
-            .bank-tabs-container { flex-direction: column; background: transparent; padding: 0; gap: 10px; }
-            .bank-tab { background: #edf2f7; }
+            .bank-tabs-container { flex-direction: column; background: transparent; padding: 0; gap: 8px; }
+            .bank-tab { 
+                background: #edf2f7; 
+                font-size: 0.95em; /* Fonte menor nas abas */
+                padding: 12px; 
+            }
 
             .stats-panel { 
                 display: grid;
                 grid-template-columns: 1fr 1fr; 
-                gap: 10px;
-                padding: 15px;
+                gap: 8px;
+                padding: 12px;
                 text-align: left;
+                margin-bottom: 20px;
             }
+            .stats-panel span { font-size: 0.85em; } /* Letra menor no quadro de acertos */
             
-            .nav-buttons { flex-direction: column; gap: 12px; }
+            .question-header { font-size: 1.15em; margin-bottom: 10px; } /* Título da questão menor */
+            .enunciado { font-size: 0.95em; margin-bottom: 15px; } /* Enunciado menor e mais enxuto */
+            
+            .assercoes-box {
+                padding: 12px 15px;
+                font-size: 0.9em;
+                margin-bottom: 15px;
+            }
+
+            .option-label {
+                padding: 12px 15px; /* Caixas das alternativas mais finas */
+                font-size: 0.9em; /* Fonte das alternativas menor */
+                margin-bottom: 8px;
+            }
+            input[type="radio"] { 
+                transform: scale(1.1); /* Diminui a bolinha de marcar */
+                margin-right: 10px; 
+            }
+
+            .nav-buttons { flex-direction: column; gap: 10px; margin-top: 15px;}
+            .btn { 
+                padding: 12px; /* Botões mais finos */
+                font-size: 0.95em; 
+            }
             #submit-btn { order: -1; }
             #prev-btn, #next-btn { width: 100%; }
 
-            .question-grid { justify-content: center; gap: 8px; }
-            .grid-btn { width: 38px; height: 38px; font-size: 0.9em; }
-        }
+            .feedback { padding: 15px; font-size: 0.9em; margin-top: 20px; }
+
+            .question-grid { justify-content: center; gap: 6px; margin-top: 25px; padding-top: 20px; }
+            .grid-btn { width: 34px; height: 34px; font-size: 0.85em; } /* Bolinhas numéricas menores */
+            
+            .reset-btn { margin-top: 25px; }
+        }        
     </style></head>
 <body>
 
